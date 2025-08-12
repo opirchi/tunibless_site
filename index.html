@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>خريطة أقاليم تونس</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body, html { height: 100%; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; display: flex; flex-direction: column; overflow: hidden; background-color: #f0f0f0; }
+    #header { padding: 10px 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; flex-shrink: 0; }
+    #toggle-legend-btn { display: none; padding: 5px 10px; font-size: 1.2rem; background: #f8f8f8; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; }
+    #header label { font-weight: bold; flex-shrink: 0; }
+    #region-filter { padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; flex-grow: 1; min-width: 200px; }
+    .main-container { position: relative; flex-grow: 1; display: flex; overflow: hidden; }
+    #legend-container { width: 340px; background: #fff; box-shadow: -2px 0 8px rgba(0,0,0,0.1); z-index: 1001; overflow-y: auto; flex-shrink: 0; transition: margin-right 0.3s ease; }
+    #map-wrapper { flex-grow: 1; position: relative; }
+    #map { height: 100%; width: 100%; }
+    #loader { position: absolute; top: 50%; left: 50%; width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; z-index: 1002; transform: translate(-50%, -50%); }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .legend-panel h4 { margin: 0; padding: 15px; text-align: center; background: #f9f9f9; border-bottom: 1px solid #eee; font-size: 18px; }
+    .legend-region { padding: 0 15px 15px; }
+    .legend-region h5 { margin: 15px 0 10px; padding-bottom: 5px; border-bottom: 1px solid #eee; display: flex; align-items: center; font-size: 16px; }
+    .legend-region h5 i { width: 18px; height: 18px; display: inline-block; margin-left: 10px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); }
+    .legend-panel ul { list-style: none; padding: 0; margin: 0; }
+    .legend-panel li { display: flex; justify-content: space-between; align-items: center; padding: 8px 5px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background-color 0.2s; }
+    .legend-panel li:hover { background-color: #f5f5f5; }
+    .legend-panel li:last-child { border-bottom: none; }
+    .legend-panel .gov-name { font-weight: 500; }
+    .legend-panel .coordinator-name { color: #555; font-size: 13px; }
+    .legend-panel .member-count { font-weight: bold; color: #007bff; margin-right: 8px; font-size: 13px; }
+    .reset-view-button { position: absolute; top: 10px; left: 10px; z-index: 1000; background: white; color: #333; width: 30px; height: 30px; line-height: 30px; text-align: center; border-radius: 4px; box-shadow: 0 1px 5px rgba(0,0,0,0.65); cursor: pointer; font-size: 1.2rem; text-decoration: none; }
+    .reset-view-button:hover { background: #f4f4f4; }
+    .leaflet-popup-content-wrapper { border-radius: 8px; }
+    .popup-link { display: block; text-align: center; margin-top: 10px; padding: 8px 15px; background-color: #007bff; color: white !important; text-decoration: none; border-radius: 5px; font-weight: bold; }
+    .leaflet-tooltip { background: rgba(0,0,0,0.7); color: white; border: none; padding: 8px; border-radius: 4px; box-shadow: none; }
+
+    @media (max-width: 768px) {
+      #toggle-legend-btn { display: block; }
+      #legend-container { position: absolute; height: 100%; margin-right: -340px; }
+      #legend-container.visible { margin-right: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="header">
+    <button id="toggle-legend-btn" title="إظهار/إخفاء الدليل">☰</button>
+    <label for="region-filter">فلترة حسب الإقليم:</label>
+    <select id="region-filter">
+      <option value="all">كل الأقاليم</option>
+    </select>
+  </div>
+
+  <div class="main-container">
+    <div id="legend-container"></div>
+    <div id="map-wrapper">
+      <div id="map"></div>
+      <div id="loader"></div>
+      <a id="reset-view-btn" class="reset-view-button" title="إعادة تعيين العرض">&#x21BA;</a>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const regionData = {
+      "الشمال الشرقي": { coordinator_name: "صوفية الجلالي", coordinator_whatsapp: "21697069360", coordinator_image: "image.jpg" },
+      "الشمال الغربي": { coordinator_name: "الاسم واللقب", coordinator_whatsapp: "21600000000", coordinator_image: "image.jpg" },
+      "الوسط الشرقي": { coordinator_name: "الاسم واللقب", coordinator_whatsapp: "21600000000", coordinator_image: "image.jpg" },
+      "الوسط الغربي": { coordinator_name: "الاسم واللقب", coordinator_whatsapp: "21600000000", coordinator_image: "image.jpg" },
+      "الجنوب":        { coordinator_name: "الاسم واللقب", coordinator_whatsapp: "21600000000", coordinator_image: "image.jpg" }
+    };
+    
+    const governorateData = {
+      "Tunis":      { members: 1520, region: "الشمال الشرقي", coordinator_name: "منسق تونس", coordinator_whatsapp: "21699000001" },
+      "Ariana":     { members: 750, region: "الشمال الشرقي", coordinator_name: "منسق أريانة", coordinator_whatsapp: "21699000002" },
+      "Ben Arous":  { members: 650, region: "الشمال الشرقي", coordinator_name: "هاجر السيد", coordinator_whatsapp: "21627405390" },
+      "Manouba":    { members: 400, region: "الشمال الشرقي", coordinator_name: "حامد الدريدي", coordinator_whatsapp: "21653220087" },
+      "Nabel":      { members: 1100, region: "الشمال الشرقي", coordinator_name: "منسق نابل", coordinator_whatsapp: "21699000005" },
+      "Zagouen":    { members: 200, region: "الشمال الشرقي", coordinator_name: "منسق زغوان", coordinator_whatsapp: "21699000006" },
+      "Bizerte":    { members: 850, region: "الشمال الشرقي", coordinator_name: "منسق بنزرت", coordinator_whatsapp: "21699000007" },
+      "Beja":       { members: 300, region: "الشمال الغربي", coordinator_name: "منسق باجة", coordinator_whatsapp: "21699000008" },
+      "Jandouba":   { members: 350, region: "الشمال الغربي", coordinator_name: "منسق جندوبة", coordinator_whatsapp: "21699000009" },
+      "Le kef":     { members: 250, region: "الشمال الغربي", coordinator_name: "منسق الكاف", coordinator_whatsapp: "21699000010" },
+      "Siliana":    { members: 200, region: "الشمال الغربي", coordinator_name: "منسق سليانة", coordinator_whatsapp: "21699000011" },
+      "Sousse":     { members: 1300, region: "الوسط الشرقي", coordinator_name: "منسق سوسة", coordinator_whatsapp: "21699000012" },
+      "Monastir":   { members: 950, region: "الوسط الشرقي", coordinator_name: "منسق المنستير", coordinator_whatsapp: "21699000013" },
+      "Mahdia":     { members: 600, region: "الوسط الشرقي", coordinator_name: "منسق المهدية", coordinator_whatsapp: "21699000014" },
+      "Sfax":       { members: 1400, region: "الوسط الشرقي", coordinator_name: "منسق صفاقس", coordinator_whatsapp: "21699000015" },
+      "Kairouan":   { members: 450, region: "الوسط الغربي", coordinator_name: "منسق القيروان", coordinator_whatsapp: "21699000016" },
+      "kasserine":  { members: 350, region: "الوسط الغربي", coordinator_name: "منسق القصرين", coordinator_whatsapp: "21699000017" },
+      "Sidi Bouzid":{ members: 400, region: "الوسط الغربي", coordinator_name: "منسق سيدي بوزيد", coordinator_whatsapp: "21699000018" },
+      "Gafsa":      { members: 500, region: "الوسط الغربي", coordinator_name: "منسق قفصة", coordinator_whatsapp: "21699000019" },
+      "Touzer":     { members: 300, region: "الجنوب", coordinator_name: "منسق توزر", coordinator_whatsapp: "21699000020" },
+      "Kebili":     { members: 350, region: "الجنوب", coordinator_name: "منسق قبلي", coordinator_whatsapp: "21699000021" },
+      "Gabes":      { members: 700, region: "الجنوب", coordinator_name: "منسق قابس", coordinator_whatsapp: "21699000022" },
+      "Mednine":    { members: 800, region: "الجنوب", coordinator_name: "منسق مدنين", coordinator_whatsapp: "21699000023" },
+      "Tataouine":  { members: 450, region: "الجنوب", coordinator_name: "منسق تطاوين", coordinator_whatsapp: "21699000024" }
+    };
+
+    const formsLinks = { "Ariana": "https://docs.google.com/forms/d/e/1FAIpQLSeIGzfgByZSGhInjFxcxslf5vyqScEaKQHm4VsXFtYv-miJCQ/viewform", "Beja": "https://docs.google.com/forms/d/e/1FAIpQLScDsTtGJyP-ZstwxkztGMKgZGmDPMKeyWGR1KMxrSdr0e7QcA/viewform", "Ben Arous": "https://docs.google.com/forms/d/e/1FAIpQLSeLsolZbo5wQ-93bH3ffVphPx2KEIkboswDQ87v9MosOb5txA/viewform", "Bizerte": "https://docs.google.com/forms/d/e/1FAIpQLSeoSe8ZFLXXh4nyCPX-qYalNkOAMpQnCYDMD2kskpEvwJ4JiA/viewform", "Gabes": "https://docs.google.com/forms/d/e/1FAIpQLSeonk4YES79GrsuzczWTxp7NxBPinCiOdR5VpEPvXWpTEw8XA/viewform", "Gafsa": "https://docs.google.com/forms/d/e/1FAIpQLSdypdTUT8Bb7nLg8WVeJ8w030mbZJ8NCU3ltH4hC3YM19q3RA/viewform", "Jandouba": "https://docs.google.com/forms/d/e/1FAIpQLScgGlJwQAl7O7PinXf8pCupylVzWdP69f-bscQag7i0LlbVig/viewform", "Kairouan": "https://docs.google.com/forms/d/e/1FAIpQLSd-j6GZFTt0bG_UPqGeHEPxMETFyyXW3F9IQE17eDQFig8wA/viewform", "kasserine": "https://docs.google.com/forms/d/e/1FAIpQLSfc2HFx7o_jDx2aJ85tnWZcuVK-ylH2s24qT2LCBbrVkBpv5A/viewform", "Kebili": "https://docs.google.com/forms/d/e/1FAIpQLSds-iNpbhZDDYvG-9dvN9LLeQcd3mN2s0sR3_bGblY3tjm9A/viewform", "Le kef": "https://docs.google.com/forms/d/e/1FAIpQLSescTjA_TZUB2T8upCt3bLbiqN-T9gmZwH5-cpgPfUmjou5sw/viewform", "Mahdia": "https://docs.google.com/forms/d/e/1FAIpQLSd2e2LnvCp5PRsjWCk18SqxffASW25O9Fp9W20DPnPgMSqwGw/viewform", "Manouba": "https://docs.google.com/forms/d/e/1FAIpQLSfbMUil_LlnE1xaYW3BKKmRtRJpc6k55ufx5aMGS9TNP7oclg/viewform", "Mednine": "https://docs.google.com/forms/d/e/1FAIpQLScZNmOkZQIcFzop9XJTcgjueJAg2XqiDWD2O8Hk3n7F3MCG_Q/viewform", "Monastir": "https://docs.google.com/forms/d/e/1FAIpQLSewTK4rBmqaQoI69Ja9vPLrkual0rcyILTgpg5rGJq5D6SfJg/viewform", "Nabel": "https://docs.google.com/forms/d/e/1FAIpQLSekivAqyuE8Wb9Bf6IvDYfi7O-y159dpyXduTlmsDNI10AVtw/viewform", "Sfax": "https://docs.google.com/forms/d/e/1FAIpQLScilM_Tjq3-smIDbyxNfEiZnbbuDUK4ww92s8ju4VNkoUeC9w/viewform", "Sidi Bouzid": "https://docs.google.com/forms/d/e/1FAIpQLSfvWAc9xFU-YGRwEc9WPuBisUtKUnLwmM6MPw6mv1DzJYZecQ/viewform", "Siliana": "https://docs.google.com/forms/d/e/1FAIpQLSdZ0eKwHOv-Mf07tugXwmt_vxPRvdx_ZJH8mWXJuF8bNiBDBQ/viewform", "Sousse": "https://docs.google.com/forms/d/e/1FAIpQLSe33qs8SD6ZDFNsNovYB1byXzPzap4u3WNxqQQi4Ca7EpixGg/viewform", "Tataouine": "https://docs.google.com/forms/d/e/1FAIpQLScau2aVzneLDLv4atr0ouUvVx1vzC_A8z6DcAl1Gu43UXO0aQ/viewform", "Touzer": "https://docs.google.com/forms/d/e/1FAIpQLScYUXdyEDgy5LQjufhK7kamNV6HrwGN_tqvbszi1bpAE0r45Q/viewform", "Tunis": "https://docs.google.com/forms/d/e/1FAIpQLSdLp23YSS1HARjCq8DZL5AzNoxJ808lteqnuvfqA1IeoAghpw/viewform", "Zagouen": "https://docs.google.com/forms/d/e/1FAIpQLSdHSr9wNzqhvfuTI3FD3OXT6XGRJ0h13DBHCxtxJ31vTY-pfA/viewform" };
+    const regionColors = { "الشمال الشرقي": "#0096c7", "الشمال الغربي": "#52b69a", "الوسط الشرقي": "#f77f00", "الوسط الغربي": "#ffe6a7", "الجنوب": "#e63946" };
+
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const loader = document.getElementById('loader');
+    const regionFilter = document.getElementById('region-filter');
+    const legendContainer = document.getElementById('legend-container');
+    const toggleButton = document.getElementById('toggle-legend-btn');
+    const map = L.map('map', { center: [34, 9.5], zoom: 7, zoomControl: false });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap &copy; CARTO' }).addTo(map);
+
+    let geojsonLayer;
+    const regionBounds = {}, gouvFrToAr = {}, layersByGouvFr = {};
+
+    function getWhatsAppLink(phone) { return `https://wa.me/${phone}`; }
+    function style(feature) {
+      const region = governorateData[feature.properties.gouv_fr]?.region;
+      return { fillColor: regionColors[region] || '#cccccc', weight: 1.5, opacity: 1, color: 'white', fillOpacity: 0.85 };
+    }
+
+    function buildLegend() {
+      let html = '<h4>الأقاليم والمنسقين</h4>';
+      for (const regionName in regionData) {
+        const regionInfo = regionData[regionName];
+        html += `<div class="legend-region"><h5><i style="background:${regionColors[regionName]}"></i>${regionName}</h5>
+                 <p><strong>المنسق الإقليمي:</strong> <a href="${getWhatsAppLink(regionInfo.coordinator_whatsapp)}" target="_blank">${regionInfo.coordinator_name}</a></p><ul>`;
+        for (const gouvFr in governorateData) {
+          if (governorateData[gouvFr].region === regionName) {
+            const gouvData = governorateData[gouvFr];
+            const gouvAr = gouvFrToAr[gouvFr] || gouvFr;
+            const memberDisplay = gouvData.members > 0 ? `<span class="member-count">(${gouvData.members.toLocaleString('ar')})</span>` : '';
+            html += `<li data-gouv-fr="${gouvFr}"><span class="gov-name">${gouvAr}</span><div>${memberDisplay}<span class="coordinator-name">${gouvData.coordinator_name}</span></div></li>`;
+          }
+        }
+        html += `</ul></div>`;
+      }
+      legendContainer.innerHTML = html;
+    }
+
+    fetch('TN-gouvernorats.geojson')
+      .then(res => res.json())
+      .then(geojson => {
+        const regions = new Set();
+        geojson.features.forEach(feature => {
+            const gouvFr = feature.properties.gouv_fr;
+            gouvFrToAr[gouvFr] = feature.properties.gouv_ar || gouvFr;
+            layersByGouvFr[gouvFr] = null; // Initialize
+            const data = governorateData[gouvFr];
+            if (data && data.region) {
+                regions.add(data.region);
+                const layerBounds = L.geoJSON(feature).getBounds();
+                if (!regionBounds[data.region]) { regionBounds[data.region] = layerBounds; } 
+                else { regionBounds[data.region].extend(layerBounds); }
+            }
+        });
+        regions.forEach(region => {
+            const option = document.createElement('option');
+            option.value = region;
+            option.textContent = region;
+            regionFilter.appendChild(option);
+        });
+
+        geojsonLayer = L.geoJSON(geojson, {
+          style: style,
+          onEachFeature: function(feature, layer) {
+            const props = feature.properties;
+            const gouvNameFr = props.gouv_fr;
+            layersByGouvFr[gouvNameFr] = layer;
+            const gouvData = governorateData[gouvNameFr];
+            const formUrl = formsLinks[gouvNameFr];
+            
+            let popupText = `<b>${gouvFrToAr[gouvNameFr]}</b>`;
+            if (gouvData) {
+                if (gouvData.members > 0) popupText += `<br>عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}`;
+                if (gouvData.coordinator_name) popupText += `<hr style="margin: 8px 0;"><p style="margin:0;"><strong>المنسق الجهوي:</strong> <a href="${getWhatsAppLink(gouvData.coordinator_whatsapp)}" target="_blank">${gouvData.coordinator_name}</a></p>`;
+                if (formUrl) popupText += `<a href="${formUrl}" target="_blank" class="popup-link">فتح استمارة التسجيل</a>`;
+            }
+            layer.bindPopup(popupText);
+            
+            let tooltipContent = `<b>${gouvFrToAr[gouvNameFr]}</b>`;
+            if(gouvData && gouvData.members > 0) tooltipContent += `<br>عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}`;
+            layer.bindTooltip(tooltipContent);
+
+            if (isTouchDevice) {
+              layer.on('click', e => {
+                 if (lastSelectedLayer) geojsonLayer.resetStyle(lastSelectedLayer);
+                 e.target.setStyle({ weight: 3, color: '#333', fillOpacity: 1 });
+                 lastSelectedLayer = e.target;
+              });
+            } else {
+              layer.on({
+                mouseover: e => e.target.setStyle({ weight: 3, color: '#333', fillOpacity: 1 }),
+                mouseout: e => geojsonLayer.resetStyle(e.target),
+                click: e => { if (formUrl) window.open(formUrl, '_blank'); }
+              });
+            }
+          }
+        }).addTo(map);
+        
+        const fullBounds = geojsonLayer.getBounds();
+        map.fitBounds(fullBounds);
+        map.setMaxBounds(fullBounds.pad(0.1));
+        buildLegend();
+
+        toggleButton.addEventListener('click', e => {
+            e.stopPropagation();
+            legendContainer.classList.toggle('visible');
+        });
+        map.on('click', () => legendContainer.classList.remove('visible'));
+
+        regionFilter.addEventListener('change', function() {
+            const selectedRegion = this.value;
+            if (selectedRegion === 'all') {
+                map.fitBounds(fullBounds);
+                geojsonLayer.eachLayer(layer => geojsonLayer.resetStyle(layer));
+            } else {
+                map.fitBounds(regionBounds[selectedRegion]);
+                geojsonLayer.eachLayer(layer => {
+                    const gouvData = governorateData[layer.feature.properties.gouv_fr];
+                    if (gouvData && gouvData.region === selectedRegion) {
+                        geojsonLayer.resetStyle(layer);
+                    } else {
+                        layer.setStyle({ fillOpacity: 0.1, weight: 0.5, color: '#ccc' });
+                    }
+                });
+            }
+        });
+
+        document.getElementById('reset-view-btn').addEventListener('click', () => {
+            regionFilter.value = 'all';
+            regionFilter.dispatchEvent(new Event('change'));
+        });
+
+        legendContainer.querySelectorAll('li[data-gouv-fr]').forEach(item => {
+            const gouvFr = item.dataset.gouvFr;
+            const layer = layersByGouvFr[gouvFr];
+            if(layer) {
+                item.addEventListener('mouseover', () => layer.fire('mouseover'));
+                item.addEventListener('mouseout', () => layer.fire('mouseout'));
+                item.addEventListener('click', () => {
+                    if (isTouchDevice) layer.openPopup();
+                    else layer.fire('click');
+                });
+            }
+        });
+        
+        loader.style.display = 'none';
+      });
+  </script>
+</body>
+</html>
+
