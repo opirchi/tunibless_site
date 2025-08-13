@@ -62,69 +62,44 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    // --- الخطوة 1: قم بتعبئة بيانات منسقي الأقاليم ---
     const regionData = {
-      "الشمال الشرقي": { coordinator_name: "صوفية الجلالي", coordinator_whatsapp: "21697069360", coordinator_image: "image.jpg" },
-      "الشمال الغربي": { coordinator_name: "الاسم واللقب", coordinator_whatsapp: "21600000000", coordinator_image: "image.jpg" },
-      "الوسط الشرقي": { coordinator_name: "الاسم واللقب", coordinator_whatsapp: "21600000000", coordinator_image: "image.jpg" },
-      "الوسط الغربي": { coordinator_name: "الاسم واللقب", coordinator_whatsapp: "21600000000", coordinator_image: "image.jpg" },
-      "الجنوب":        { coordinator_name: "الاسم واللقب", coordinator_whatsapp: "21600000000", coordinator_image: "image.jpg" }
+      "الشمال الشرقي": { coordinator_name: "صوفية الجلالي", coordinator_image: "image.jpg" },
+      "الشمال الغربي": { coordinator_name: "الاسم واللقب", coordinator_image: "image.jpg" },
+      "الوسط الشرقي": { coordinator_name: "الاسم واللقب", coordinator_image: "image.jpg" },
+      "الوسط الغربي": { coordinator_name: "الاسم واللقب", coordinator_image: "image.jpg" },
+      "الجنوب":       { coordinator_name: "الاسم واللقب", coordinator_image: "image.jpg" }
     };
     
-    // --- الخطوة 2: قم بتعبئة بيانات الولايات (الأعضاء والمنسقين) ---
     const governorateData = {
-      "Tunis":      { members: 1620, region: "الشمال الشرقي", coordinator_name: "منسق تونس", coordinator_whatsapp: "21699000001" },
-      "Ariana":     { members: 991, region: "الشمال الشرقي", coordinator_name: "منسق أريانة", coordinator_whatsapp: "21699000002" },
-      "Ben Arous":  { members: 1414, region: "الشمال الشرقي", coordinator_name: "هاجر السيد", coordinator_whatsapp: "21627405390" },
-      "Manouba":    { members: 789, region: "الشمال الشرقي", coordinator_name: "حامد الدريدي", coordinator_whatsapp: "21653220087" },
-      "Nabel":      { members: 1368, region: "الشمال الشرقي", coordinator_name: "منسق نابل", coordinator_whatsapp: "21699000005" },
-      "Zagouen":    { members: 267, region: "الشمال الشرقي", coordinator_name: "منسق زغوان", coordinator_whatsapp: "21699000006" },
-      "Bizerte":    { members: 972, region: "الشمال الشرقي", coordinator_name: "منسق بنزرت", coordinator_whatsapp: "21699000007" },
-      "Beja":       { members: 346, region: "الشمال الغربي", coordinator_name: "منسق باجة", coordinator_whatsapp: "21699000008" },
-      "Jandouba":   { members: 628, region: "الشمال الغربي", coordinator_name: "منسق جندوبة", coordinator_whatsapp: "21699000009" },
-      "Le kef":     { members: 715, region: "الشمال الغربي", coordinator_name: "منسق الكاف", coordinator_whatsapp: "21699000010" },
-      "Siliana":    { members: 222, region: "الشمال الغربي", coordinator_name: "منسق سليانة", coordinator_whatsapp: "21699000011" },
-      "Sousse":     { members: 1301, region: "الوسط الشرقي", coordinator_name: "منسق سوسة", coordinator_whatsapp: "21699000012" },
-      "Monastir":   { members: 1037, region: "الوسط الشرقي", coordinator_name: "منسق المنستير", coordinator_whatsapp: "21699000013" },
-      "Mahdia":     { members: 718, region: "الوسط الشرقي", coordinator_name: "منسق المهدية", coordinator_whatsapp: "21699000014" },
-      "Sfax":       { members: 1343, region: "الوسط الشرقي", coordinator_name: "منسق صفاقس", coordinator_whatsapp: "21699000015" },
-      "Kairouan":   { members: 548, region: "الوسط الغربي", coordinator_name: "منسق القيروان", coordinator_whatsapp: "21699000016" },
-      "kasserine":  { members: 445, region: "الوسط الغربي", coordinator_name: "منسق القصرين", coordinator_whatsapp: "21699000017" },
-      "Sidi Bouzid":{ members: 912, region: "الوسط الغربي", coordinator_name: "منسق سيدي بوزيد", coordinator_whatsapp: "21699000018" },
-      "Gafsa":      { members: 1306, region: "لوسط الغربي", coordinator_name: "منسق قفصة", coordinator_whatsapp: "21699000019" },
-      "Touzer":     { members: 900, region: "الجنوب", coordinator_name: "منسق توزر", coordinator_whatsapp: "21699000020" },
-      "Kebili":     { members: 745, region: "الجنوب", coordinator_name: "منسق قبلي", coordinator_whatsapp: "21699000021" },
-      "Gabes":      { members: 3406, region: "الجنوب", coordinator_name: "منسق قابس", coordinator_whatsapp: "21699000022" },
-      "Mednine":    { members: 2543, region: "الجنوب", coordinator_name: "منسق مدنين", coordinator_whatsapp: "21699000023" },
-      "Tataouine":  { members: 785, region: "الجنوب", coordinator_name: "منسق تطاوين", coordinator_whatsapp: "21699000024" }
+      "Tunis":     { members: 1620, region: "الشمال الشرقي", coordinator_name: "منسق تونس" },
+      "Ariana":      { members: 991, region: "الشمال الشرقي", coordinator_name: "منسق أريانة" },
+      "Ben Arous": { members: 1414, region: "الشمال الشرقي", coordinator_name: "هاجر السيد" },
+      "Manouba":   { members: 789, region: "الشمال الشرقي", coordinator_name: "حامد الدريدي" },
+      "Nabel":     { members: 1368, region: "الشمال الشرقي", coordinator_name: "منسق نابل" },
+      "Zagouen":   { members: 267, region: "الشمال الشرقي", coordinator_name: "منسق زغوان" },
+      "Bizerte":   { members: 972, region: "الشمال الشرقي", coordinator_name: "منسق بنزرت" },
+      "Beja":        { members: 346, region: "الشمال الغربي", coordinator_name: "منسق باجة" },
+      "Jandouba":    { members: 628, region: "الشمال الغربي", coordinator_name: "منسق جندوبة" },
+      "Le kef":      { members: 715, region: "الشمال الغربي", coordinator_name: "منسق الكاف" },
+      "Siliana":   { members: 222, region: "الشمال الغربي", coordinator_name: "منسق سليانة" },
+      "Sousse":      { members: 1301, region: "الوسط الشرقي", coordinator_name: "منسق سوسة" },
+      "Monastir":    { members: 1037, region: "الوسط الشرقي", coordinator_name: "منسق المنستير" },
+      "Mahdia":      { members: 718, region: "الوسط الشرقي", coordinator_name: "منسق المهدية" },
+      "Sfax":        { members: 1343, region: "الوسط الشرقي", coordinator_name: "منسق صفاقس" },
+      "Kairouan":    { members: 548, region: "الوسط الغربي", coordinator_name: "منسق القيروان" },
+      "kasserine": { members: 445, region: "الوسط الغربي", coordinator_name: "منسق القصرين" },
+      "Sidi Bouzid":{ members: 912, region: "الوسط الغربي", coordinator_name: "منسق سيدي بوزيد" },
+      "Gafsa":     { members: 1306, region: "لوسط الغربي", coordinator_name: "منسق قفصة" },
+      "Touzer":      { members: 900, region: "الجنوب", coordinator_name: "منسق توزر" },
+      "Kebili":      { members: 745, region: "الجنوب", coordinator_name: "منسق قبلي" },
+      "Gabes":     { members: 3406, region: "الجنوب", coordinator_name: "منسق قابس" },
+      "Mednine":   { members: 2543, region: "الجنوب", coordinator_name: "منسق مدنين" },
+      "Tataouine": { members: 785, region: "الجنوب", coordinator_name: "منسق تطاوين" }
     };
 
     const formsLinks = {
-    "Ariana": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-ariana",
-    "Beja": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-beja",
-    "Ben Arous": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-ben-arous",
-    "Bizerte": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-bizerte",
-    "Gabes": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-gabes",
-    "Gafsa": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-gafsa",
-    "Jandouba": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-jandouba",
-    "Kairouan": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-kairouan",
-    "Kasserine": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-kasserine",
-    "Kebili": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-kebili",
-    "Le Kef": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-le-kef",
-    "Mahdia": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-mahdia",
-    "Manouba": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-manouba",
-    "Mednine": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-medenine",
-    "Monastir": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-monastir",
-    "Nabel": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-nabeul",
-    "Sfax": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-sfax",
-    "Sidi Bouzid": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-sidi-bouzid",
-    "Siliana": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-siliana",
-    "Sousse": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-sousse",
-    "Tataouine": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-tataouine",
-    "Touzer": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-tozeur",
-    "Tunis": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-tunis",
-    "Zagouen": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-zaghouan"
-};
+      "Ariana": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-ariana", "Beja": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-beja", "Ben Arous": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-ben-arous", "Bizerte": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-bizerte", "Gabes": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-gabes", "Gafsa": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-gafsa", "Jandouba": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-jandouba", "Kairouan": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-kairouan", "Kasserine": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-kasserine", "Kebili": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-kebili", "Le Kef": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-le-kef", "Mahdia": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-mahdia", "Manouba": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-manouba", "Mednine": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-medenine", "Monastir": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-monastir", "Nabel": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-nabeul", "Sfax": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-sfax", "Sidi Bouzid": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-sidi-bouzid", "Siliana": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-siliana", "Sousse": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-sousse", "Tataouine": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-tataouine", "Touzer": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-tozeur", "Tunis": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-tunis", "Zagouen": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-zaghouan"
+    };
     const regionColors = { "الشمال الشرقي": "#0096c7", "الشمال الغربي": "#52b69a", "الوسط الشرقي": "#f77f00", "الوسط الغربي": "#ffe6a7", "الجنوب": "#e63946" };
 
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -132,15 +107,12 @@
     const regionFilter = document.getElementById('region-filter');
     const legendContainer = document.getElementById('legend-container');
     const toggleButton = document.getElementById('toggle-legend-btn');
-   // 1. تمت إضافة attributionControl: false هنا لإخفاء مربع الحقوق
-const map = L.map('map', { center: [34, 9.5], zoom: 7, zoomControl: false, attributionControl: false });
-
-// 2. تم حذف خاصية attribution من هذا السطر
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {}).addTo(map);
+    const map = L.map('map', { center: [34, 9.5], zoom: 7, zoomControl: false, attributionControl: false });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {}).addTo(map);
     let geojsonLayer;
+    let lastSelectedLayer = null;
     const regionBounds = {}, gouvFrToAr = {}, layersByGouvFr = {};
 
-    function getWhatsAppLink(phone) { return `https://wa.me/${phone}`; }
     function style(feature) {
       const region = governorateData[feature.properties.gouv_fr]?.region;
       return { fillColor: regionColors[region] || '#cccccc', weight: 1.5, opacity: 1, color: 'white', fillOpacity: 0.85 };
@@ -151,7 +123,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {}
       for (const regionName in regionData) {
         const regionInfo = regionData[regionName];
         html += `<div class="legend-region"><h5><i style="background:${regionColors[regionName]}"></i>${regionName}</h5>
-                 <p><strong>المنسق الإقليمي:</strong> <a href="${getWhatsAppLink(regionInfo.coordinator_whatsapp)}" target="_blank">${regionInfo.coordinator_name}</a></p><ul>`;
+                 <p><strong>المنسق الإقليمي:</strong> ${regionInfo.coordinator_name}</p><ul>`;
         for (const gouvFr in governorateData) {
           if (governorateData[gouvFr].region === regionName) {
             const gouvData = governorateData[gouvFr];
@@ -200,25 +172,35 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {}
             let popupText = `<b>${gouvFrToAr[gouvNameFr]}</b>`;
             if (gouvData) {
                 if (gouvData.members > 0) popupText += `<br>عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}`;
-                if (gouvData.coordinator_name) popupText += `<hr style="margin: 8px 0;"><p style="margin:0;"><strong>المنسق الجهوي:</strong> <a href="${getWhatsAppLink(gouvData.coordinator_whatsapp)}" target="_blank">${gouvData.coordinator_name}</a></p>`;
+                if (gouvData.coordinator_name) popupText += `<hr style="margin: 8px 0;"><p style="margin:0;"><strong>المنسق الجهوي:</strong> ${gouvData.coordinator_name}</p>`;
                 if (formUrl) popupText += `<a href="${formUrl}" target="_blank" class="popup-link">فتح استمارة التسجيل</a>`;
             }
             layer.bindPopup(popupText);
             
-            let tooltipContent = `<b>${gouvFrToAr[gouvNameFr]}</b>`;
-            if(gouvData && gouvData.members > 0) tooltipContent += `<br>عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}`;
-            layer.bindTooltip(tooltipContent);
+            if (!isTouchDevice) {
+                let tooltipContent = `<b>${gouvFrToAr[gouvNameFr]}</b>`;
+                if(gouvData && gouvData.members > 0) tooltipContent += `<br>عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}`;
+                layer.bindTooltip(tooltipContent);
+            }
 
             if (isTouchDevice) {
               layer.on('click', e => {
-                 if (lastSelectedLayer) geojsonLayer.resetStyle(lastSelectedLayer);
-                 e.target.setStyle({ weight: 3, color: '#333', fillOpacity: 1 });
-                 lastSelectedLayer = e.target;
+                  if (lastSelectedLayer) geojsonLayer.resetStyle(lastSelectedLayer);
+                  e.target.setStyle({ weight: 3, color: '#333', fillOpacity: 1 });
+                  lastSelectedLayer = e.target;
               });
             } else {
               layer.on({
-                mouseover: e => e.target.setStyle({ weight: 3, color: '#333', fillOpacity: 1 }),
-                mouseout: e => geojsonLayer.resetStyle(e.target),
+                mouseover: e => {
+                    if (regionFilter.value === 'all') {
+                        e.target.setStyle({ weight: 3, color: '#333', fillOpacity: 1 });
+                    }
+                },
+                mouseout: e => {
+                    if (regionFilter.value === 'all') {
+                        geojsonLayer.resetStyle(e.target);
+                    }
+                },
                 click: e => { if (formUrl) window.open(formUrl, '_blank'); }
               });
             }
@@ -263,8 +245,12 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {}
             const gouvFr = item.dataset.gouvFr;
             const layer = layersByGouvFr[gouvFr];
             if(layer) {
-                item.addEventListener('mouseover', () => layer.fire('mouseover'));
-                item.addEventListener('mouseout', () => layer.fire('mouseout'));
+                item.addEventListener('mouseover', () => {
+                    if (regionFilter.value === 'all') layer.fire('mouseover');
+                });
+                item.addEventListener('mouseout', () => {
+                    if (regionFilter.value === 'all') layer.fire('mouseout');
+                });
                 item.addEventListener('click', () => {
                     if (isTouchDevice) layer.openPopup();
                     else layer.fire('click');
@@ -277,4 +263,3 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {}
   </script>
 </body>
 </html>
-
