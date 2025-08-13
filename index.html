@@ -132,9 +132,11 @@
     const regionFilter = document.getElementById('region-filter');
     const legendContainer = document.getElementById('legend-container');
     const toggleButton = document.getElementById('toggle-legend-btn');
-    const map = L.map('map', { center: [34, 9.5], zoom: 7, zoomControl: false });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap &copy; CARTO' }).addTo(map);
+   // 1. تمت إضافة attributionControl: false هنا لإخفاء مربع الحقوق
+const map = L.map('map', { center: [34, 9.5], zoom: 7, zoomControl: false, attributionControl: false });
 
+// 2. تم حذف خاصية attribution من هذا السطر
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {}).addTo(map);
     let geojsonLayer;
     const regionBounds = {}, gouvFrToAr = {}, layersByGouvFr = {};
 
