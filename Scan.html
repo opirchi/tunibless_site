@@ -1,97 +1,44 @@
-<div style="direction: rtl; font-family: system-ui, Tahoma, Arial; max-width: 500px; margin: 20px auto; text-align: center;">
-  <h3>فحص التذاكر بالـ QR</h3>
-  <p>اضغط على "بدء المسح" ثم وجّه الكاميرا إلى QR في التذكرة.</p>
-  
-  <button id="start-scan-btn" style="padding: 12px 25px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 15px;">
-    📷 بدء المسح
-  </button>
-  
-  <div id="reader" style="width: 100%; border-radius: 8px; overflow: hidden;"></div>
-  <div id="scan-msg" style="margin-top: 15px; font-weight: bold; font-size: 18px; padding: 10px; border-radius: 8px;"></div>
-</div>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <title>اختبار كاميرا QR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <style>
+        body { font-family: system-ui, sans-serif; text-align: center; padding: 20px; }
+        #reader { width: 90%; max-width: 400px; margin: 20px auto; border: 2px solid #ccc; border-radius: 8px; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>اختبار كاميرا QR</h1>
+    <p>إذا ظهر زر "Request Camera Permissions" أدناه، فاضغط عليه.</p>
+    <div id="reader"></div>
+    <div id="result"></div>
 
-<script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js" onload="initializeApp()"></script>
-<script>
-  function initializeApp() {
-    
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyd2cG50qB9EWzHfZdki4-Op_XTA5kLXtWoV9rg9ld7ivy8VF7wE6Y9CoVHQ0OxCjyN/exec';
-    const msg = document.getElementById('scan-msg');
-    const startBtn = document.getElementById('start-scan-btn');
-    const readerDiv = document.getElementById('reader');
-
-    const html5Qrcode = new Html5Qrcode("reader");
-
-    function onScanSuccess(decodedText, decodedResult) {
-      html5Qrcode.stop().then(ignore => {
-          msg.textContent = 'جارٍ التحقق: ' + decodedText;
-          msg.style.backgroundColor = '#eef2ff';
-          msg.style.color = '#333';
-
-          fetch(WEB_APP_URL, {
-            method: 'POST',
-            headers: {'Content-Type': 'text/plain'},
-            body: JSON.stringify({ action: 'use', ticketId: decodedText })
-          })
-          .then(r => r.json())
-          .then(j => {
-            if (j.ok) {
-              msg.textContent = '✅ تذكرة صالحة، تم الدخول';
-              msg.style.backgroundColor = '#dcfce7';
-              msg.style.color = '#166534';
-            } else {
-              msg.textContent = '❌ ' + (j.error || 'تذكرة غير صالحة');
-              msg.style.backgroundColor = '#fee2e2';
-              msg.style.color = '#991b1b';
-            }
-          })
-          .catch(() => { 
-              msg.textContent = 'خطأ في الاتصال بالخادم';
-              msg.style.backgroundColor = '#fef3c7';
-              msg.style.color = '#92400e';
-          });
-      }).catch(err => {
-          console.error("فشل إيقاف المسح.", err);
-      });
-    }
-
-    function onScanFailure(error) {
-      // We can ignore scan failures.
-    }
-
-    startBtn.addEventListener('click', () => {
-      startBtn.style.display = 'none';
-      msg.textContent = "يرجى منح الإذن للوصول إلى الكاميرا...";
-      msg.style.backgroundColor = 'transparent';
-      msg.style.color = '#333';
-
-      // New robust logic to find and start a camera
-      Html5Qrcode.getCameras().then(cameras => {
-        if (cameras && cameras.length) {
-          // Use the first available camera.
-          const cameraId = cameras[0].id;
-          const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-          
-          msg.textContent = "تم العثور على كاميرا، جاري البدء...";
-          
-          html5Qrcode.start(cameraId, config, onScanSuccess, onScanFailure)
-            .catch(err => {
-              msg.textContent = "حدث خطأ عند محاولة تشغيل الكاميرا.";
-              msg.style.backgroundColor = '#fee2e2';
-              msg.style.color = '#991b1b';
-              startBtn.style.display = 'block';
+    <script>
+        function onScanSuccess(decodedText, decodedResult) {
+            document.getElementById('result').textContent = `✅ تم المسح بنجاح: ${decodedText}`;
+            console.log(`Code matched = ${decodedText}`, decodedResult);
+            // لإيقاف الماسح بعد نجاح القراءة
+            html5QrcodeScanner.clear().catch(error => {
+                console.error("Failed to clear html5QrcodeScanner.", error);
             });
-        } else {
-          msg.textContent = "لم يتم العثور على أي كاميرا على هذا الجهاز.";
-          msg.style.backgroundColor = '#fee2e2';
-          msg.style.color = '#991b1b';
-          startBtn.style.display = 'block';
         }
-      }).catch(err => {
-        msg.textContent = "خطأ في الوصول إلى قائمة الكاميرات. الرجاء التأكد من منح الإذن.";
-        msg.style.backgroundColor = '#fee2e2';
-        msg.style.color = '#991b1b';
-        startBtn.style.display = 'block';
-      });
-    });
-  }
-</script>
+
+        function onScanFailure(error) {
+            // تجاهل أخطاء عدم العثور على كود
+            // console.warn(`Code scan error = ${error}`);
+        }
+
+        // هذا الكود يستخدم واجهة المستخدم الجاهزة من المكتبة نفسها
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            { fps: 10, qrbox: {width: 250, height: 250} },
+            /* verbose= */ false);
+        
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    </script>
+
+</body>
+</html>
