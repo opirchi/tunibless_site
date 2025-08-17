@@ -1,54 +1,55 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <title>ماسح QR</title>
+    <title>فحص التذاكر</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js" onload="runScanner()"></script>
     <style>
-        body { font-family: system-ui, sans-serif; text-align: center; padding: 20px; background-color: #f0f0f0; }
+        body { font-family: system-ui, sans-serif; text-align: center; padding: 20px; }
         #reader { width: 90%; max-width: 400px; margin: 20px auto; border: 2px solid #ccc; border-radius: 8px; }
         #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
-        .success { color: #166534; }
-        .error { color: #991b1b; }
     </style>
 </head>
 <body>
-    <h1>فحص التذاكر</h1>
+    <h1>فحص التذاكر بالـ QR</h1>
+    <p>سيظهر زر "طلب أذونات الكاميرا" أدناه. اضغط عليه لبدء المسح.</p>
     <div id="reader"></div>
     <div id="result"></div>
 
     <script>
-    !function(t){"function"==typeof define&&define.amd?define(t):"object"==typeof module&&module.exports?module.exports=t():window.Html5Qrcode=t()}((function(){return function(t){var e={};function n(r){if(e[r])return e[r].exports;var i=e[r]={i:r,l:!1,exports:{}};return t[r].call(i.exports,i,i.exports,n),i.l=!0,i.exports}return n.m=t,n.c=e,n.d=function(t,e,r){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:r})},n.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var i in t)n.d(r,i,function(e){return t[e]}.bind(null,i));return r},n.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="",n(n.s=2)}.call(this,{"/BgT":function(t,e,n){},2:function(t,e,n){"use strict";n.r(e);var r=n("VT29"),i=n("RIqW");n("/BgT");e.default=r.a},RIqW:function(t,e,n){"use strict";var r;!function(t){t[t.QR_CODE=0]="QR_CODE",t[t.AZTEC=1]="AZTEC",t[t.CODABAR=2]="CODABAR",t[t.CODE_39=3]="CODE_39",t[t.CODE_93=4]="CODE_93",t[t.CODE_128=5]="CODE_128",t[t.DATA_MATRIX=6]="DATA_MATRIX",t[t.MAXICODE=7]="MAXICODE",t[t.ITF=8]="ITF",t[t.EAN_13=9]="EAN_13",t[t.EAN_8=10]="EAN_8",t[t.PDF_417=11]="PDF_417",t[t.RSS_14=12]="RSS_14",t[t.RSS_EXPANDED=13]="RSS_EXPANDED",t[t.UPC_A=14]="UPC_A",t[t.UPC_E=15]="UPC_E",t[t.UPC_EAN_EXTENSION=16]="UPC_EAN_EXTENSION"}(r||(r={}));var i,o;!function(t){t[t.UNKNOWN=0]="UNKNOWN",t[t.AZTEC=1]="AZTEC",t[t.CODABAR=2]="CODABAR",t[t.CODE_39=3]="CODE_39",t[t.CODE_93=4]="CODE_93",t[t.CODE_128=5]="CODE_128",t[t.DATA_MATRIX=6]="DATA_MATRIX",t[t.EAN_13=7]="EAN_13",t[t.EAN_8=8]="EAN_8",t[t.ITF=9]="ITF",t[t.MAXICODE=10]="MAXICODE",t[t.PDF_417=11]="PDF_417",t[t.QR_CODE=12]="QR_CODE",t[t.RSS_14=13]="RSS_14",t[t.RSS_EXPANDED=14]="RSS_EXPANDED",t[t.UPC_A=15]="UPC_A",t[t.UPC_E=16]="UPC_E",t[t.UPC_EAN_EXTENSION=17]="UPC_EAN_EXTENSION"}(i||(i={})),function(t){t[t.FRONT=0]="FRONT",t[t.BACK=1]="BACK"}(o||(o={}));var a=function(){function t(t,e,n){this.data=t,this.decodedText=e,this.result=n}return t.createFrom=function(e,n){var r=JSON.parse(e);return new t(r.data,n,r)},t.prototype.getData=function(){return this.data},t}();n.d(e,"b",(function(){return i})),n.d(e,"a",(function(){return o}))},VT29:function(t,e,n){"use strict";var r=n("RIqW");function i(t,e){t instanceof Function?t(e):t&&(t.value=e)}var o=function(){function t(t,e,n,r,i){this.verbose=e,this.qrcodeSuccessCallback=n,this.qrcodeErrorCallback=r,this.video=null,this.canvas=null,this.localMediaStream=null,this.isScanning=!1,this.element=document.getElementById(t),this.element||(this.element=document.createElement("div"),this.element.id=t,document.body.appendChild(this.element)),this.element.style.position="relative",this.element.style.display="block",this.element.style.overflow="hidden",this.width=i&&i.width?i.width:250,this.height=i&&i.height?i.height:250,this.element.style.width=this.width+"px",this.element.style.height=this.height+"px",this.qrcode=self.qrcode,this.qrcode.callback=this.handleCodeFound.bind(this)}return t.prototype.start=function(t,e,n,r){return new Promise((function(i,o){var a=this;if(a.isScanning)return void o("Scanning is already in progress.");var s={audio:!1,video:e};navigator.mediaDevices.getUserMedia(s).then((function(s){a.isScanning=!0,a.localMediaStream=s;var c=document.createElement("video");a.video=c,c.setAttribute("playsinline",!0),c.style.width=a.width+"px",c.style.height=a.height+"px",a.element.appendChild(c);var u=function(t){c.srcObject=t,c.addEventListener("loadedmetadata",(function(){c.play(),i(!0),n&&n(t)}))};setTimeout(u,2e3,s)}))}))},t.prototype.stop=function(){return this.localMediaStream||o("No scanning is in progress."),this.localMediaStream.getVideoTracks().forEach((function(t){t.stop()})),this.localMediaStream=null,this.video.remove(),this.video=null,this.canvas.remove(),this.canvas=null,this.isScanning=!1,this.element.style.borderStyle="none",!0},t.prototype.scanFile=function(t){},t.prototype.clear=function(){},t.prototype.getMediaDevices=function(){return navigator.mediaDevices.enumerateDevices()},t.prototype.getCameras=function(){return new Promise((function(e,n){t.getCameras().then((function(t){e(t)})).catch((function(t){n(t)}))}))},t.getCameras=function(){return new Promise((function(e,n){var r=[];navigator.mediaDevices.enumerateDevices().then((function(t){t.forEach((function(t){"videoinput"===t.kind&&(console.log(t.label,t.deviceId),r.push({id:t.deviceId,label:t.label}))})),e(r)})).catch((function(t){n(t)}))}))},t.prototype.handleCodeFound=function(t){this.qrcodeSuccessCallback(t)},t.prototype.handleCodeError=function(t){this.qrcodeErrorCallback(t)},t}();n.d(e,"a",(function(){return o}))}}).default;
+      // This entire function will only be called after the library is fully loaded,
+      // because of the onload="runScanner()" attribute in the script tag above.
+      function runScanner() {
+        
+        function onScanSuccess(decodedText, decodedResult) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = `✅ تم المسح بنجاح: ${decodedText}`;
+            resultDiv.style.color = '#166534';
+            
+            // Stop the scanner after a successful scan
+            html5QrcodeScanner.clear().catch(error => {
+                console.error("Failed to clear html5QrcodeScanner.", error);
+            });
+        }
 
+        function onScanFailure(error) {
+            // This function is required by the library, but we can leave it empty
+            // as it fires continuously when no QR code is found.
+        }
+
+        // Create a new scanner instance
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            { 
+                fps: 10, 
+                qrbox: {width: 250, height: 250} 
+            },
+            /* verbose= */ false);
+        
+        // Render the scanner UI, which includes the permission button
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+      }
     </script>
 
-    <script>
-      // This will only run after the library above is fully loaded and ready.
-      function onScanSuccess(decodedText, decodedResult) {
-          const resultDiv = document.getElementById('result');
-          resultDiv.textContent = `✅ تم المسح بنجاح!`;
-          resultDiv.className = 'success';
-          console.log(`Code matched = ${decodedText}`, decodedResult);
-          
-          // Stop the scanner after a successful scan
-          html5QrcodeScanner.clear().catch(error => {
-              console.error("Failed to clear html5QrcodeScanner.", error);
-          });
-      }
-
-      function onScanFailure(error) {
-          // We can ignore failures where no QR code is found.
-      }
-
-      // This uses the library's own UI, which creates the button for you.
-      let html5QrcodeScanner = new Html5QrcodeScanner(
-          "reader", 
-          { 
-              fps: 10, 
-              qrbox: {width: 250, height: 250} 
-          },
-          /* verbose= */ false);
-      
-      html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-    </script>
 </body>
 </html>
