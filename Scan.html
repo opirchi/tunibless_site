@@ -10,10 +10,11 @@
   <div id="scan-msg" style="margin-top: 15px; font-weight: bold; font-size: 18px; padding: 10px; border-radius: 8px;"></div>
 </div>
 
-<script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js" onload="initializeApp()"></script>
+
 <script>
-  // This listener ensures our code runs only after the page and libraries are ready.
-  document.addEventListener('DOMContentLoaded', (event) => {
+  // All of our code is now inside this function
+  function initializeApp() {
     
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyd2cG50qB9EWzHfZdki4-Op_XTA5kLXtWoV9rg9ld7ivy8VF7wE6Y9CoVHQ0OxCjyN/exec'; // <--- تأكد من وضع رابط الويب الصحيح هنا
     const msg = document.getElementById('scan-msg');
@@ -75,6 +76,5 @@
           startBtn.style.display = 'block';
         });
     });
-
-  });
+  }
 </script>
