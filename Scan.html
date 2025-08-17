@@ -3,53 +3,71 @@
 <head>
     <title>فحص التذاكر</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js" onload="runScanner()"></script>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <style>
         body { font-family: system-ui, sans-serif; text-align: center; padding: 20px; }
         #reader { width: 90%; max-width: 400px; margin: 20px auto; border: 2px solid #ccc; border-radius: 8px; }
         #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        button { padding: 12px 25px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
     </style>
 </head>
 <body>
     <h1>فحص التذاكر بالـ QR</h1>
-    <p>سيظهر زر "طلب أذونات الكاميرا" أدناه. اضغط عليه لبدء المسح.</p>
+    <button id="start-button">📷 بدء المسح</button>
     <div id="reader"></div>
     <div id="result"></div>
 
     <script>
-      // This entire function will only be called after the library is fully loaded,
-      // because of the onload="runScanner()" attribute in the script tag above.
-      function runScanner() {
-        
-        function onScanSuccess(decodedText, decodedResult) {
+        document.addEventListener('DOMContentLoaded', function () {
+            const startBtn = document.getElementById('start-button');
+            const readerDiv = document.getElementById('reader');
             const resultDiv = document.getElementById('result');
-            resultDiv.textContent = `✅ تم المسح بنجاح: ${decodedText}`;
-            resultDiv.style.color = '#166534';
-            
-            // Stop the scanner after a successful scan
-            html5QrcodeScanner.clear().catch(error => {
-                console.error("Failed to clear html5QrcodeScanner.", error);
+
+            // Create an instance of the low-level scanner
+            const html5QrCode = new Html5Qrcode("reader");
+
+            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                resultDiv.innerHTML = `✅ تم المسح بنجاح: ${decodedText}`;
+                resultDiv.style.color = '#166534';
+                
+                html5QrCode.stop().then(ignore => {
+                    console.log("تم إيقاف المسح.");
+                }).catch(err => {
+                    console.log("فشل إيقاف المسح.", err);
+                });
+            };
+
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+            startBtn.addEventListener('click', () => {
+                startBtn.style.display = 'none';
+                resultDiv.textContent = "جاري طلب الإذن للكاميرا...";
+
+                // This is the robust way to find and start a camera
+                Html5Qrcode.getCameras().then(cameras => {
+                    if (cameras && cameras.length) {
+                        const cameraId = cameras[0].id; // Use the first available camera
+                        resultDiv.textContent = "تم العثور على كاميرا، جاري البدء...";
+                        
+                        html5QrCode.start(
+                            cameraId, 
+                            config,
+                            qrCodeSuccessCallback,
+                            (errorMessage) => { /* ignore scan failure */ }
+                        ).catch(err => {
+                            resultDiv.textContent = `حدث خطأ عند تشغيل الكاميرا: ${err}`;
+                            startBtn.style.display = 'block';
+                        });
+                    } else {
+                        resultDiv.textContent = "لم يتم العثور على أي كاميرا على هذا الجهاز.";
+                        startBtn.style.display = 'block';
+                    }
+                }).catch(err => {
+                    resultDiv.textContent = `خطأ في الوصول إلى الكاميرات. الرجاء التأكد من منح الإذن. (${err})`;
+                    startBtn.style.display = 'block';
+                });
             });
-        }
-
-        function onScanFailure(error) {
-            // This function is required by the library, but we can leave it empty
-            // as it fires continuously when no QR code is found.
-        }
-
-        // Create a new scanner instance
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", 
-            { 
-                fps: 10, 
-                qrbox: {width: 250, height: 250} 
-            },
-            /* verbose= */ false);
-        
-        // Render the scanner UI, which includes the permission button
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-      }
+        });
     </script>
-
 </body>
 </html>
