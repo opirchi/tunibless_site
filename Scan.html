@@ -3,11 +3,11 @@
 <head>
     <title>فحص التذاكر</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js" onload="initializeApp()"></script>
     <style>
         body { font-family: system-ui, sans-serif; text-align: center; padding: 20px; }
-        #reader { width: 90%; max-width: 400px; margin: 20px auto; border: 2px solid #ccc; border-radius: 8px; }
-        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        #reader { width: 90%; max-width: 400px; margin: 10px auto; border: 2px solid #ccc; border-radius: 8px; }
+        #result { margin-top: 15px; font-weight: bold; font-size: 18px; padding: 10px; border-radius: 5px; }
         button { padding: 12px 25px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
     </style>
 </head>
@@ -18,32 +18,28 @@
     <div id="result"></div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        // This function is the ONLY code that runs, and it ONLY runs after the library is loaded.
+        function initializeApp() {
             const startBtn = document.getElementById('start-button');
-            const readerDiv = document.getElementById('reader');
             const resultDiv = document.getElementById('result');
 
-            // Create an instance of the low-level scanner
+            // The library is guaranteed to be loaded here, so Html5Qrcode will be defined.
             const html5QrCode = new Html5Qrcode("reader");
 
             const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                resultDiv.innerHTML = `✅ تم المسح بنجاح: ${decodedText}`;
+                resultDiv.textContent = `✅ تم المسح بنجاح: ${decodedText}`;
+                resultDiv.style.backgroundColor = '#dcfce7';
                 resultDiv.style.color = '#166534';
                 
-                html5QrCode.stop().then(ignore => {
-                    console.log("تم إيقاف المسح.");
-                }).catch(err => {
-                    console.log("فشل إيقاف المسح.", err);
-                });
+                html5QrCode.stop().catch(err => console.error("فشل إيقاف المسح.", err));
             };
-
-            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
             startBtn.addEventListener('click', () => {
                 startBtn.style.display = 'none';
                 resultDiv.textContent = "جاري طلب الإذن للكاميرا...";
+                resultDiv.style.backgroundColor = 'transparent';
 
-                // This is the robust way to find and start a camera
+                // Robust way to find and start a camera
                 Html5Qrcode.getCameras().then(cameras => {
                     if (cameras && cameras.length) {
                         const cameraId = cameras[0].id; // Use the first available camera
@@ -51,7 +47,7 @@
                         
                         html5QrCode.start(
                             cameraId, 
-                            config,
+                            { fps: 10, qrbox: { width: 250, height: 250 } },
                             qrCodeSuccessCallback,
                             (errorMessage) => { /* ignore scan failure */ }
                         ).catch(err => {
@@ -63,11 +59,11 @@
                         startBtn.style.display = 'block';
                     }
                 }).catch(err => {
-                    resultDiv.textContent = `خطأ في الوصول إلى الكاميرات. الرجاء التأكد من منح الإذن. (${err})`;
+                    resultDiv.textContent = `خطأ في الوصول إلى الكاميرات. الرجاء التأكد من منح الإذن.`;
                     startBtn.style.display = 'block';
                 });
             });
-        });
+        }
     </script>
 </body>
 </html>
