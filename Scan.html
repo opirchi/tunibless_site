@@ -12,66 +12,69 @@
 
 <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 <script>
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyd2cG50qB9EWzHfZdki4-Op_XTA5kLXtWoV9rg9ld7ivy8VF7wE6Y9CoVHQ0OxCjyN/exec'; // <--- تأكد من وضع رابط الويب الصحيح هنا
-  const msg = document.getElementById('scan-msg');
-  const startBtn = document.getElementById('start-scan-btn');
-  const readerDiv = document.getElementById('reader');
-
-  const html5Qrcode = new Html5Qrcode("reader");
-
-  function onScanSuccess(decodedText, decodedResult) {
-    html5Qrcode.stop().then(ignore => {
-        msg.textContent = 'جارٍ التحقق: ' + decodedText;
-        msg.style.backgroundColor = '#eef2ff';
-        msg.style.color = '#333';
-
-        fetch(WEB_APP_URL, {
-          method: 'POST',
-          headers: {'Content-Type': 'text/plain'},
-          body: JSON.stringify({ action: 'use', ticketId: decodedText })
-        })
-        .then(r => r.json())
-        .then(j => {
-          if (j.ok) {
-            msg.textContent = '✅ تذكرة صالحة، تم الدخول';
-            msg.style.backgroundColor = '#dcfce7';
-            msg.style.color = '#166534';
-          } else {
-            msg.textContent = '❌ ' + (j.error || 'تذكرة غير صالحة');
-            msg.style.backgroundColor = '#fee2e2';
-            msg.style.color = '#991b1b';
-          }
-        })
-        .catch(() => { 
-            msg.textContent = 'خطأ في الاتصال بالخادم';
-            msg.style.backgroundColor = '#fef3c7';
-            msg.style.color = '#92400e';
-        });
-    }).catch(err => {
-        console.error("فشل إيقاف المسح.", err);
-    });
-  }
-
-  function onScanFailure(error) {
-    // We can ignore scan failures.
-  }
-
-  startBtn.addEventListener('click', () => {
-    // Hide the button and show a message
-    startBtn.style.display = 'none';
-    msg.textContent = "يرجى منح الإذن للوصول إلى الكاميرا...";
-    msg.style.backgroundColor = 'transparent';
-    msg.style.color = '#333';
-
-    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+  // This listener ensures our code runs only after the page and libraries are ready.
+  document.addEventListener('DOMContentLoaded', (event) => {
     
-    // Start scanning
-    html5Qrcode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
-      .catch(err => {
-        msg.textContent = "تعذّر تشغيل الكاميرا. تأكد من منح الإذن وأنك تستخدم رابط https.";
-        msg.style.backgroundColor = '#fee2e2';
-        msg.style.color = '#991b1b';
-        startBtn.style.display = 'block'; // Show button again if it fails
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyd2cG50qB9EWzHfZdki4-Op_XTA5kLXtWoV9rg9ld7ivy8VF7wE6Y9CoVHQ0OxCjyN/exec'; // <--- تأكد من وضع رابط الويب الصحيح هنا
+    const msg = document.getElementById('scan-msg');
+    const startBtn = document.getElementById('start-scan-btn');
+    const readerDiv = document.getElementById('reader');
+
+    const html5Qrcode = new Html5Qrcode("reader");
+
+    function onScanSuccess(decodedText, decodedResult) {
+      html5Qrcode.stop().then(ignore => {
+          msg.textContent = 'جارٍ التحقق: ' + decodedText;
+          msg.style.backgroundColor = '#eef2ff';
+          msg.style.color = '#333';
+
+          fetch(WEB_APP_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'text/plain'},
+            body: JSON.stringify({ action: 'use', ticketId: decodedText })
+          })
+          .then(r => r.json())
+          .then(j => {
+            if (j.ok) {
+              msg.textContent = '✅ تذكرة صالحة، تم الدخول';
+              msg.style.backgroundColor = '#dcfce7';
+              msg.style.color = '#166534';
+            } else {
+              msg.textContent = '❌ ' + (j.error || 'تذكرة غير صالحة');
+              msg.style.backgroundColor = '#fee2e2';
+              msg.style.color = '#991b1b';
+            }
+          })
+          .catch(() => { 
+              msg.textContent = 'خطأ في الاتصال بالخادم';
+              msg.style.backgroundColor = '#fef3c7';
+              msg.style.color = '#92400e';
+          });
+      }).catch(err => {
+          console.error("فشل إيقاف المسح.", err);
       });
+    }
+
+    function onScanFailure(error) {
+      // We can ignore scan failures.
+    }
+
+    startBtn.addEventListener('click', () => {
+      startBtn.style.display = 'none';
+      msg.textContent = "يرجى منح الإذن للوصول إلى الكاميرا...";
+      msg.style.backgroundColor = 'transparent';
+      msg.style.color = '#333';
+
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+      
+      html5Qrcode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
+        .catch(err => {
+          msg.textContent = "تعذّر تشغيل الكاميرا. تأكد من منح الإذن وأنك تستخدم رابط https.";
+          msg.style.backgroundColor = '#fee2e2';
+          msg.style.color = '#991b1b';
+          startBtn.style.display = 'block';
+        });
+    });
+
   });
 </script>
