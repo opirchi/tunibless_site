@@ -1,117 +1,56 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <title>فحص التذاكر</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-  <style>
-    body { 
-      font-family: system-ui, sans-serif; 
-      text-align: center; 
-      padding: 20px; 
-      background: linear-gradient(135deg, #f0f4ff, #e6f7ff);
-    }
-    h1 { color: #0d47a1; margin-bottom: 15px; }
-    #reader { 
-      width: 90%; 
-      max-width: 400px; 
-      margin: 20px auto; 
-      border: 2px solid #007bff; 
-      border-radius: 12px; 
-      background: white; 
-      padding: 10px;
-    }
-    #result { 
-      margin-top: 20px; 
-      font-size: 18px; 
-      font-weight: bold; 
-      padding: 15px; 
-      border-radius: 10px; 
-      display: inline-block; 
-      min-width: 200px; 
-    }
-    .success { background: #d1fae5; color: #065f46; border: 1px solid #10b981; }
-    .error { background: #fee2e2; color: #991b1b; border: 1px solid #ef4444; }
-    button { 
-      padding: 12px 25px; 
-      font-size: 16px; 
-      font-weight: bold; 
-      color: white; 
-      background-color: #007bff; 
-      border: none; 
-      border-radius: 8px; 
-      cursor: pointer; 
-      margin: 10px;
-    }
-    button:hover { background-color: #0056b3; }
-  </style>
+    <title>فحص التذاكر</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- ✅ مكتبة QR الصحيحة -->
+    <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
+    <style>
+        body { font-family: system-ui, sans-serif; text-align: center; padding: 20px; }
+        #reader { width: 90%; max-width: 400px; margin: 20px auto; border: 2px solid #ccc; border-radius: 8px; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        button { padding: 12px 25px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
+    </style>
 </head>
 <body>
-  <h1>🎟️ فحص التذاكر بالـ QR</h1>
-  <button id="start-button">📷 بدء المسح</button>
-  <div id="reader" style="display:none;"></div>
-  <div id="result"></div>
-  <button id="retry-button" style="display:none;">🔄 إعادة المسح</button>
+    <h1>فحص التذاكر بالـ QR</h1>
+    <button id="start-button">📷 بدء المسح</button>
+    <div id="reader"></div>
+    <div id="result"></div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const startBtn = document.getElementById('start-button');
-      const retryBtn = document.getElementById('retry-button');
-      const readerDiv = document.getElementById('reader');
-      const resultDiv = document.getElementById('result');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const startBtn = document.getElementById('start-button');
+            const resultDiv = document.getElementById('result');
+            const html5QrCode = new Html5Qrcode("reader");
 
-      const html5QrCode = new Html5Qrcode("reader");
-      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                resultDiv.innerHTML = `✅ تم المسح بنجاح: ${decodedText}`;
+                resultDiv.style.color = '#166534';
+                html5QrCode.stop();
+            };
 
-      function stopScanner() {
-        html5QrCode.stop().then(() => {
-          readerDiv.style.display = 'none';
-        }).catch(err => console.log("فشل إيقاف المسح", err));
-      }
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
-      function startScanner() {
-        startBtn.style.display = 'none';
-        retryBtn.style.display = 'none';
-        resultDiv.textContent = "";
-        readerDiv.style.display = 'block';
+            startBtn.addEventListener('click', () => {
+                startBtn.style.display = 'none';
+                resultDiv.textContent = "جاري طلب الإذن للكاميرا...";
 
-        Html5Qrcode.getCameras().then(cameras => {
-          if (cameras && cameras.length) {
-            const cameraId = cameras[0].id;
-            html5QrCode.start(
-              cameraId, 
-              config,
-              (decodedText) => {
-                resultDiv.innerHTML = `✅ التذكرة صالحة: <br>${decodedText}`;
-                resultDiv.className = "success";
-                stopScanner();
-                retryBtn.style.display = 'inline-block';
-              },
-              (errorMessage) => {
-                // عرض خطأ مؤقت عند الفشل المتكرر
-                resultDiv.innerHTML = "❌ لم يتم التعرف على الكود";
-                resultDiv.className = "error";
-              }
-            ).catch(err => {
-              resultDiv.textContent = `خطأ عند تشغيل الكاميرا: ${err}`;
-              resultDiv.className = "error";
-              startBtn.style.display = 'block';
+                Html5Qrcode.getCameras().then(cameras => {
+                    if (cameras && cameras.length) {
+                        const cameraId = cameras[0].id;
+                        resultDiv.textContent = "تم العثور على كاميرا، جاري البدء...";
+                        html5QrCode.start(cameraId, config, qrCodeSuccessCallback);
+                    } else {
+                        resultDiv.textContent = "⚠️ لم يتم العثور على أي كاميرا.";
+                        startBtn.style.display = 'block';
+                    }
+                }).catch(err => {
+                    resultDiv.textContent = `خطأ: ${err}`;
+                    startBtn.style.display = 'block';
+                });
             });
-          } else {
-            resultDiv.textContent = "لم يتم العثور على أي كاميرا على هذا الجهاز.";
-            resultDiv.className = "error";
-            startBtn.style.display = 'block';
-          }
-        }).catch(err => {
-          resultDiv.textContent = `خطأ في الوصول إلى الكاميرات: ${err}`;
-          resultDiv.className = "error";
-          startBtn.style.display = 'block';
         });
-      }
-
-      startBtn.addEventListener('click', startScanner);
-      retryBtn.addEventListener('click', startScanner);
-    });
-  </script>
+    </script>
 </body>
 </html>
