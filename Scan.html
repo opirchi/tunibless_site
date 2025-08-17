@@ -3,7 +3,7 @@
 <head>
     <title>اختبار كاميرا QR</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js" onload="runScanner()"></script>
     <style>
         body { font-family: system-ui, sans-serif; text-align: center; padding: 20px; }
         #reader { width: 90%; max-width: 400px; margin: 20px auto; border: 2px solid #ccc; border-radius: 8px; }
@@ -17,27 +17,32 @@
     <div id="result"></div>
 
     <script>
+      // This entire function will only be called after the library is fully loaded,
+      // because of the onload="runScanner()" attribute in the script tag above.
+      function runScanner() {
+        
         function onScanSuccess(decodedText, decodedResult) {
             document.getElementById('result').textContent = `✅ تم المسح بنجاح: ${decodedText}`;
             console.log(`Code matched = ${decodedText}`, decodedResult);
-            // لإيقاف الماسح بعد نجاح القراءة
+            // Stop the scanner after a successful scan
             html5QrcodeScanner.clear().catch(error => {
                 console.error("Failed to clear html5QrcodeScanner.", error);
             });
         }
 
         function onScanFailure(error) {
-            // تجاهل أخطاء عدم العثور على كود
-            // console.warn(`Code scan error = ${error}`);
+            // We can ignore failures where no QR code is found.
         }
 
-        // هذا الكود يستخدم واجهة المستخدم الجاهزة من المكتبة نفسها
+        // This is the line that was causing the error before.
+        // It's now safely inside the runScanner function.
         let html5QrcodeScanner = new Html5QrcodeScanner(
             "reader", 
             { fps: 10, qrbox: {width: 250, height: 250} },
             /* verbose= */ false);
         
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+      }
     </script>
 
 </body>
