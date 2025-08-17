@@ -3,53 +3,138 @@
 <head>
     <title>فحص التذاكر</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- ✅ مكتبة QR الصحيحة -->
-    <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <style>
-        body { font-family: system-ui, sans-serif; text-align: center; padding: 20px; }
-        #reader { width: 90%; max-width: 400px; margin: 20px auto; border: 2px solid #ccc; border-radius: 8px; }
-        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
-        button { padding: 12px 25px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
+        body { 
+            font-family: system-ui, sans-serif; 
+            text-align: center; 
+            padding: 20px; 
+            background: #f3f4f6;
+        }
+        h1 { color: #111827; margin-bottom: 15px; }
+        #reader { 
+            width: 90%; 
+            max-width: 400px; 
+            margin: 20px auto; 
+            border: 2px dashed #9ca3af; 
+            border-radius: 12px; 
+            background: white; 
+            padding: 10px;
+        }
+        #result { 
+            margin-top: 20px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            padding: 15px; 
+            border-radius: 10px; 
+            display: inline-block; 
+            min-width: 250px; 
+            border: 1px solid transparent;
+        }
+        .success { background: #d1fae5; color: #065f46; border-color: #10b981; }
+        .error { background: #fee2e2; color: #991b1b; border-color: #ef4444; }
+        .info { background: #e0f2fe; color: #0c4a6e; border-color: #7dd3fc; }
+        button { 
+            padding: 12px 25px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            color: white; 
+            background-color: #2563eb; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            margin: 10px;
+            transition: background-color 0.2s;
+        }
+        button:hover { background-color: #1d4ed8; }
     </style>
 </head>
 <body>
-    <h1>فحص التذاكر بالـ QR</h1>
+    <h1>🎟️ فحص تذاكر الحفل</h1>
     <button id="start-button">📷 بدء المسح</button>
-    <div id="reader"></div>
+    <div id="reader" style="display:none;"></div>
     <div id="result"></div>
+    <button id="retry-button" style="display:none;">🔄 مسح تذكرة أخرى</button>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyd2cG50qB9EWzHfZdki4-Op_XTA5kLXtWoV9rg9ld7ivy8VF7wE6Y9CoVHQ0OxCjyN/exec';
+
             const startBtn = document.getElementById('start-button');
+            const retryBtn = document.getElementById('retry-button');
+            const readerDiv = document.getElementById('reader');
             const resultDiv = document.getElementById('result');
+
             const html5QrCode = new Html5Qrcode("reader");
-
-            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                resultDiv.innerHTML = `✅ تم المسح بنجاح: ${decodedText}`;
-                resultDiv.style.color = '#166534';
-                html5QrCode.stop();
-            };
-
             const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
-            startBtn.addEventListener('click', () => {
+            function stopScanner() {
+                html5QrCode.stop().then(() => {
+                    readerDiv.style.display = 'none';
+                }).catch(err => console.log("لم يتوقف المسح بشكل نظيف.", err));
+            }
+
+            function onScanSuccess(decodedText, decodedResult) {
+                stopScanner();
+                resultDiv.textContent = 'جارٍ التحقق من التذكرة...';
+                resultDiv.className = "info";
+                
+                // --- الاتصال بالخادم للتحقق من التذكرة ---
+                fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'text/plain'},
+                    body: JSON.stringify({ action: 'use', ticketId: decodedText })
+                })
+                .then(r => r.json())
+                .then(j => {
+                    if (j.ok) {
+                        resultDiv.textContent = '✅ تذكرة صالحة، تم تسجيل الدخول';
+                        resultDiv.className = "success";
+                    } else {
+                        resultDiv.textContent = '❌ ' + (j.error || 'تذكرة غير صالحة');
+                        resultDiv.className = "error";
+                    }
+                    retryBtn.style.display = 'inline-block';
+                })
+                .catch(() => { 
+                    resultDiv.textContent = '⚠️ خطأ في الاتصال بالخادم';
+                    resultDiv.className = "error";
+                    retryBtn.style.display = 'inline-block';
+                });
+            }
+
+            function startScanner() {
                 startBtn.style.display = 'none';
-                resultDiv.textContent = "جاري طلب الإذن للكاميرا...";
+                retryBtn.style.display = 'none';
+                resultDiv.textContent = "";
+                resultDiv.className = "";
+                readerDiv.style.display = 'block';
 
                 Html5Qrcode.getCameras().then(cameras => {
                     if (cameras && cameras.length) {
                         const cameraId = cameras[0].id;
-                        resultDiv.textContent = "تم العثور على كاميرا، جاري البدء...";
-                        html5QrCode.start(cameraId, config, qrCodeSuccessCallback);
+                        html5QrCode.start(
+                            cameraId, 
+                            config,
+                            onScanSuccess,
+                            (errorMessage) => { /* تجاهل الأخطاء العادية */ }
+                        ).catch(err => {
+                            resultDiv.textContent = `خطأ عند تشغيل الكاميرا: ${err}`;
+                            resultDiv.className = "error";
+                            startBtn.style.display = 'block';
+                        });
                     } else {
-                        resultDiv.textContent = "⚠️ لم يتم العثور على أي كاميرا.";
-                        startBtn.style.display = 'block';
+                        resultDiv.textContent = "لم يتم العثور على أي كاميرا.";
+                        resultDiv.className = "error";
                     }
                 }).catch(err => {
-                    resultDiv.textContent = `خطأ: ${err}`;
-                    startBtn.style.display = 'block';
+                    resultDiv.textContent = `خطأ في الوصول إلى الكاميرات. الرجاء التأكد من منح الإذن.`;
+                    resultDiv.className = "error";
                 });
-            });
+            }
+
+            startBtn.addEventListener('click', startScanner);
+            retryBtn.addEventListener('click', startScanner);
         });
     </script>
 </body>
