@@ -3,7 +3,7 @@
 <head>
     <title>فحص التذاكر</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
     <style>
         body { 
             font-family: system-ui, sans-serif; 
@@ -57,7 +57,11 @@
     <button id="retry-button" style="display:none;">🔄 مسح تذكرة أخرى</button>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // ✅ هنا ستكون مكتبة Html5Qrcode معرفة
+        const html5QrCode = new Html5Qrcode("reader");
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
             const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyd2cG50qB9EWzHfZdki4-Op_XTA5kLXtWoV9rg9ld7ivy8VF7wE6Y9CoVHQ0OxCjyN/exec';
 
             const startBtn = document.getElementById('start-button');
