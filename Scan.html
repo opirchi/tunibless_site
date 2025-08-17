@@ -11,12 +11,10 @@
 </div>
 
 <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js" onload="initializeApp()"></script>
-
 <script>
-  // All of our code is now inside this function
   function initializeApp() {
     
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyd2cG50qB9EWzHfZdki4-Op_XTA5kLXtWoV9rg9ld7ivy8VF7wE6Y9CoVHQ0OxCjyN/exec'; // <--- تأكد من وضع رابط الويب الصحيح هنا
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyd2cG50qB9EWzHfZdki4-Op_XTA5kLXtWoV9rg9ld7ivy8VF7wE6Y9CoVHQ0OxCjyN/exec';
     const msg = document.getElementById('scan-msg');
     const startBtn = document.getElementById('start-scan-btn');
     const readerDiv = document.getElementById('reader');
@@ -66,15 +64,34 @@
       msg.style.backgroundColor = 'transparent';
       msg.style.color = '#333';
 
-      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-      
-      html5Qrcode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
-        .catch(err => {
-          msg.textContent = "تعذّر تشغيل الكاميرا. تأكد من منح الإذن وأنك تستخدم رابط https.";
+      // New robust logic to find and start a camera
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+          // Use the first available camera.
+          const cameraId = cameras[0].id;
+          const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+          
+          msg.textContent = "تم العثور على كاميرا، جاري البدء...";
+          
+          html5Qrcode.start(cameraId, config, onScanSuccess, onScanFailure)
+            .catch(err => {
+              msg.textContent = "حدث خطأ عند محاولة تشغيل الكاميرا.";
+              msg.style.backgroundColor = '#fee2e2';
+              msg.style.color = '#991b1b';
+              startBtn.style.display = 'block';
+            });
+        } else {
+          msg.textContent = "لم يتم العثور على أي كاميرا على هذا الجهاز.";
           msg.style.backgroundColor = '#fee2e2';
           msg.style.color = '#991b1b';
           startBtn.style.display = 'block';
-        });
+        }
+      }).catch(err => {
+        msg.textContent = "خطأ في الوصول إلى قائمة الكاميرات. الرجاء التأكد من منح الإذن.";
+        msg.style.backgroundColor = '#fee2e2';
+        msg.style.color = '#991b1b';
+        startBtn.style.display = 'block';
+      });
     });
   }
 </script>
