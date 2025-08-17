@@ -1,49 +1,75 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <title>اختبار كاميرا QR</title>
+    <title>تشخيص الماسح الضوئي</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js" onload="runScanner()"></script>
     <style>
         body { font-family: system-ui, sans-serif; text-align: center; padding: 20px; }
+        #status { margin-top: 20px; padding: 10px; border-radius: 5px; background-color: #eef2ff; border: 1px solid #c7d2fe; font-weight: bold; }
         #reader { width: 90%; max-width: 400px; margin: 20px auto; border: 2px solid #ccc; border-radius: 8px; }
-        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; color: #166534; }
     </style>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js" onload="initializeApp()" onerror="loadFallback()"></script>
 </head>
 <body>
-    <h1>اختبار كاميرا QR</h1>
-    <p>إذا ظهر زر "Request Camera Permissions" أدناه، فاضغط عليه.</p>
+    <h1>تشخيص كاميرا QR</h1>
+    <div id="status">الحالة: جاري محاولة تحميل المكتبة...</div>
     <div id="reader"></div>
     <div id="result"></div>
 
     <script>
-      // This entire function will only be called after the library is fully loaded,
-      // because of the onload="runScanner()" attribute in the script tag above.
-      function runScanner() {
-        
-        function onScanSuccess(decodedText, decodedResult) {
-            document.getElementById('result').textContent = `✅ تم المسح بنجاح: ${decodedText}`;
-            console.log(`Code matched = ${decodedText}`, decodedResult);
-            // Stop the scanner after a successful scan
-            html5QrcodeScanner.clear().catch(error => {
-                console.error("Failed to clear html5QrcodeScanner.", error);
-            });
+        const statusDiv = document.getElementById('status');
+        let isInitialized = false;
+
+        // هذه الدالة تعمل فقط إذا فشل تحميل الرابط الأول
+        function loadFallback() {
+            statusDiv.innerHTML = "فشل التحميل من المصدر الأول. جاري محاولة التحميل من مصدر احتياطي...";
+            const fallbackScript = document.createElement('script');
+            fallbackScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.4/html5-qrcode.min.js';
+            fallbackScript.onload = initializeApp;
+            fallbackScript.onerror = function() {
+                statusDiv.textContent = 'خطأ فادح: فشل تحميل المكتبة من كلا المصدرين.';
+                statusDiv.style.backgroundColor = '#fee2e2';
+                statusDiv.style.color = '#991b1b';
+            };
+            document.head.appendChild(fallbackScript);
         }
 
-        function onScanFailure(error) {
-            // We can ignore failures where no QR code is found.
-        }
+        // هذه الدالة سيتم استدعاؤها بعد نجاح تحميل المكتبة
+        function initializeApp() {
+            if (isInitialized) return; // منع التشغيل مرتين
+            isInitialized = true;
+            
+            statusDiv.innerHTML = "تم تحميل المكتبة بنجاح.";
 
-        // This is the line that was causing the error before.
-        // It's now safely inside the runScanner function.
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", 
-            { fps: 10, qrbox: {width: 250, height: 250} },
-            /* verbose= */ false);
-        
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-      }
+            // الآن سنتحقق من وجود الكلاس المطلوب
+            if (typeof Html5QrcodeScanner !== 'undefined') {
+                statusDiv.innerHTML += "<br>تم العثور على `Html5QrcodeScanner`. جاري تشغيل الماسح...";
+                
+                try {
+                    let html5QrcodeScanner = new Html5QrcodeScanner(
+                        "reader", 
+                        { fps: 10, qrbox: {width: 250, height: 250} },
+                        /* verbose= */ false);
+                    
+                    html5QrcodeScanner.render(
+                        (decodedText, decodedResult) => { // onScanSuccess
+                           document.getElementById('result').textContent = `✅ تم المسح بنجاح: ${decodedText}`;
+                           html5QrcodeScanner.clear();
+                        },
+                        (error) => { /* onScanFailure, we can ignore it */ }
+                    );
+
+                } catch (err) {
+                    statusDiv.innerHTML += `<br>حدث خطأ عند محاولة تشغيل الماسح: ${err.message}`;
+                    statusDiv.style.backgroundColor = '#fee2e2';
+                }
+            } else {
+                statusDiv.textContent = 'خطأ: المكتبة تم تحميلها لكن `Html5QrcodeScanner` غير معرّف.';
+                statusDiv.style.backgroundColor = '#fee2e2';
+                statusDiv.style.color = '#991b1b';
+            }
+        }
     </script>
-
 </body>
 </html>
