@@ -154,15 +154,13 @@ function highlightFeature(e) {
 
   // لا تسمح بتغيير اللون إذا كان الإقليم غير 'all' والولاية لا تنتمي إليه
   if (selectedRegion !== 'all' && (!data || data.region !== selectedRegion)) {
-    // في حالة عدم الانتماء، لا تفعل شيئاً لتجنب تغيير اللون
     return;
   }
 
-  // تطبيق تأثير التحديد
   layer.setStyle({
     weight: 3,
     color: '#333',
-    fillOpacity: 1
+    fillOpacity: 1 // اجعلها 1 لتظهر بوضوح عند التفاعل
   });
 
   if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -172,17 +170,18 @@ function highlightFeature(e) {
 
 // دالة لإعادة التعيين
 function resetHighlight(e) {
-  // إعادة التعيين إلى النمط الأساسي (مع الأخذ في الاعتبار فلتر الإقليم الحالي)
   const layer = e.target;
   const selectedRegion = regionFilter.value;
   const gouvNameFr = layer.feature.properties.gouv_fr;
   const data = governorateData[gouvNameFr];
 
   let baseStyle = style(layer.feature);
+  
   if (selectedRegion !== 'all' && (!data || data.region !== selectedRegion)) {
-    // إذا كانت لا تنتمي للإقليم المختار، اجعلها شفافة أكثر
+    // إذا كانت لا تنتمي للإقليم المختار، اجعل الشفافية 0.1 كما حددها الفلتر
     baseStyle.fillOpacity = 0.1;
   }
+  // وإلا ستبقى 0.85 كما في الدالة style()
 
   layer.setStyle(baseStyle);
 }
@@ -214,20 +213,38 @@ fetch('TN-gouvernorats.geojson')
         const gouvData = governorateData[gouvNameFr];
         const formUrl = formsLinks[gouvNameFr];
 
-        // تفعيل الـ tooltip فقط، وهي تعمل على الهاتف والكمبيوتر
+        // 1. ربط الـ Tooltip (تظهر عند التمرير على الحاسوب)
         layer.bindTooltip(() => {
           if(!gouvData) return "";
           return `<strong>${gouvFrToAr[gouvNameFr]}</strong><br>المنسق: ${gouvData.coordinator_name}<br>عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}`;
         }, { direction: 'top', sticky: true });
 
-        // معالجة تفاعلات الماوس والنقر
-        layer.on({
-          mouseover: highlightFeature, // استخدم الدالة الجديدة لتجنب التفاعل مع الأقاليم غير المختارة
-          mouseout: resetHighlight,    // استخدم الدالة الجديدة لتجنب التفاعل مع الأقاليم غير المختارة
-          click: e=>{
-            if (formUrl) window.open(formUrl,'_blank'); // **إعادة توجيه لصفحة التسجيل مباشرة على الهاتف والحاسوب**
-          }
-        });
+        if (isTouchDevice) {
+          // 2. منطق الجهاز اللوحي/الهاتف: نقرة واحدة تظهر الـ Popup، الـ Popup فيه رابط
+          layer.on('click', e => {
+            // تطبيق الـ highlight عند النقر
+            if (lastSelectedLayer) geojsonLayer.resetStyle(lastSelectedLayer);
+            highlightFeature(e);
+            lastSelectedLayer = e.target;
+
+            // بناء محتوى الـ Popup
+            let popupText = `<h3 style="margin:0;">${gouvFrToAr[gouvNameFr]}</h3>`;
+            if (gouvData) {
+              if (gouvData.members>0) popupText+=`<p style="margin: 5px 0;">عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}</p>`;
+              if (gouvData.coordinator_name) popupText+=`<p style="margin: 5px 0;">المنسق الإقليمي: ${gouvData.coordinator_name}</p>`;
+            }
+            if (formUrl) popupText+=`<a href="${formUrl}" target="_blank" class="popup-link" style="display:block; padding:8px; background:#007bff; color:white; text-align:center; border-radius:4px; margin-top:10px; text-decoration:none;">فتح استمارة التسجيل</a>`;
+            
+            layer.bindPopup(popupText).openPopup();
+          });
+        } else {
+          // 3. منطق الحاسوب: التمرير يظهر Tooltip، والنقر ينتقل مباشرة
+          layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: e=>{ if (formUrl) window.open(formUrl,'_blank'); } // فتح الرابط مباشرة
+          });
+        }
       }
     }).addTo(map);
 
@@ -244,8 +261,13 @@ fetch('TN-gouvernorats.geojson')
       item.addEventListener('mouseover', ()=>layer.fire('mouseover'));
       item.addEventListener('mouseout', ()=>layer.fire('mouseout'));
       item.addEventListener('click', ()=>{
-        if (formUrl) window.open(formUrl,'_blank');
-        // لا داعي لفتح الـ popup هنا
+        if (isTouchDevice) {
+          // على الهاتف، انقر على القائمة الجانبية يفتح الـ Popup أيضاً
+          layer.fire('click'); 
+        } else if (formUrl) {
+          // على الحاسوب، انقر على القائمة الجانبية يفتح الرابط
+          window.open(formUrl,'_blank');
+        }
       });
     });
 
@@ -261,12 +283,10 @@ regionFilter.addEventListener('change', e=>{
       
     if (!data) return;
 
-    let newStyle = style(layer.feature); // يبدأ بالنمط الأساسي (اللون)
+    let newStyle = style(layer.feature);
     
-    if (selectedRegion === 'all') {
-      newStyle.fillOpacity = 0.85; // الإقليم بالكامل مرئي
-    } else if (data.region === selectedRegion) {
-      newStyle.fillOpacity = 1; // الإقليم المختار مرئي تماماً
+    if (selectedRegion === 'all' || data.region === selectedRegion) {
+      newStyle.fillOpacity = 0.85; // الأقاليم المختارة مرئية بوضوح
     } else {
       newStyle.fillOpacity = 0.1; // الولايات الأخرى شفافة جداً
     }
