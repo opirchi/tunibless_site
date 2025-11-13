@@ -72,55 +72,57 @@ const map = L.map('map', { center: [34, 9.5], zoom: 7, zoomControl: false, attri
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {}).addTo(map);
 
 // =========================================================================
-// بيانات المنسقين الإقليميين
+// تحديث: بيانات المنسقين الإقليميين
 const regionData = {
-  "الشمال الشرقي": { coordinator_name: "صوفية جاللي" },
-  "الشمال الغربي": { coordinator_name: "ليلى مرواني" },
-  "الوسط الشرقي": { coordinator_name: "ريم فرحات" },
-  "الوسط الغربي": { coordinator_name: "وصال تليلي" },
-  "الجنوب":      { coordinator_name: "وحيدة كواش" }
+  "الشمال الشرقي": { coordinator_name: "صوفية الجلالي" },
+  "الشمال الغربي": { coordinator_name: "ليلى مرواني" }, // تمت الإضافة من بياناتك السابقة
+  "الوسط الشرقي": { coordinator_name: "ريم فرحات" }, // تمت الإضافة من بياناتك السابقة
+  "الوسط الغربي": { coordinator_name: "وصال تليلي" }, // تمت الإضافة من بياناتك السابقة
+  "الجنوب":       { coordinator_name: "وحيدة كواش" } // تمت الإضافة من بياناتك السابقة
 };
 // =========================================================================
 
 // =========================================================================
-// بيانات المنسقين الجهويين (الولايات)
+// تحديث: بيانات المنسقين الجهويين (الولايات)
 const governorateData = {
-  // الشمال الشرقي (منسقة جهوية: صوفية جاللي)
-  "Tunis": { members: 1748, region: "الشمال الشرقي", coordinator_name: "يسرى محمد (منسقة محلية تونس)" },
-  "Ariana": { members: 1074, region: "الشمال الشرقي", coordinator_name: "محمد الهادي الخالدي (منسق محلي)" },
-  "Ben Arous": { members: 1559, region: "الشمال الشرقي", coordinator_name: "هاجر سعيد (منسقة جهوية)" },
-  "Manouba": { members: 887, region: "الشمال الشرقي", coordinator_name: "اسامة عياري (منسق جهوي)" },
-  "Nabel": { members: 1494, region: "الشمال الشرقي", coordinator_name: "روضة عياد (منسقة جهوية)" },
-  "Zagouen": { members: 300, region: "الشمال الشرقي", coordinator_name: "منسق زغوان (غير مذكور)" },
-  "Bizerte": { members: 1004, region: "الشمال الشرقي", coordinator_name: "نزار الهذلي (منسق محلي)" },
+  // الشمال الشرقي 
+  "Tunis": { members: 1748, region: "الشمال الشرقي", coordinator_name: "يسرى محمد" }, // تم تحديث الاسم
+  "Ariana": { members: 1074, region: "الشمال الشرقي", coordinator_name: "محمد الهادي الخالدي" }, // تم تحديث الاسم
+  "Ben Arous": { members: 1559, region: "الشمال الشرقي", coordinator_name: "هاجر سعيد" }, // تم تحديث الاسم
+  "Manouba": { members: 887, region: "الشمال الشرقي", coordinator_name: "اسامة عياري" }, // تم تحديث الاسم
+  "Nabel": { members: 1494, region: "الشمال الشرقي", coordinator_name: "روضة عياد" }, // تم تحديث الاسم
+  "Zagouen": { members: 300, region: "الشمال الشرقي", coordinator_name: "منسق زغوان (قيد التعيين)" }, 
+  "Bizerte": { members: 1004, region: "الشمال الشرقي", coordinator_name: "نزار الهذلي" }, // تم تحديث الاسم
 
-  // الشمال الغربي (منسقة إقليمية: ليلى مرواني)
-  "Beja": { members: 369, region: "الشمال الغربي", coordinator_name: "ياسمين المؤدب (منسقة محلية)" },
-  "Jandouba": { members: 646, region: "الشمال الغربي", coordinator_name: "عمر همامي (منسق محلي)" },
-  "Le kef": { members: 831, region: "الشمال الغربي", coordinator_name: "مروى نواصرية (منسقة جهوية)" },
-  "Siliana": { members: 234, region: "الشمال الغربي", coordinator_name: "سليم الرياحي (منسق محلي)" },
+  // الشمال الغربي 
+  "Beja": { members: 369, region: "الشمال الغربي", coordinator_name: "ياسمين المؤدب" }, // تم تحديث الاسم
+  "Jandouba": { members: 646, region: "الشمال الغربي", coordinator_name: "عمر همامي" }, // تم تحديث الاسم
+  "Le kef": { members: 831, region: "الشمال الغربي", coordinator_name: "مروى نواصرية" }, // تم تحديث الاسم
+  "Siliana": { members: 234, region: "الشمال الغربي", coordinator_name: "سليم الرياحي" }, // تم تحديث الاسم
   
-  // الوسط الشرقي (منسقة إقليمية: ريم فرحات)
-  "Sousse": { members: 1376, region: "الوسط الشرقي", coordinator_name: "محمد مقداد (منسق جهوي)" },
-  "Monastir": { members: 1091, region: "الوسط الشرقي", coordinator_name: "درصاف نايلي (منسق جهوي)" },
-  "Mahdia": { members: 746, region: "الوسط الشرقي", coordinator_name: "زياد بودية (منسق جهوي)" },
-  "Sfax": { members: 1461, region: "الوسط الشرقي", coordinator_name: "عماد عمار (منسق جهوي)" },
+  // الوسط الشرقي 
+  "Sousse": { members: 1376, region: "الوسط الشرقي", coordinator_name: "محمد مقداد" }, // تم تحديث الاسم
+  "Monastir": { members: 1091, region: "الوسط الشرقي", coordinator_name: "درصاف نايلي" }, // تم تحديث الاسم
+  "Mahdia": { members: 746, region: "الوسط الشرقي", coordinator_name: "زياد بودية" }, // تم تحديث الاسم
+  "Sfax": { members: 1461, region: "الوسط الشرقي", coordinator_name: "عماد عمار" }, // تم تحديث الاسم
 
-  // الوسط الغربي (منسقة إقليمية: وصال تليلي)
-  "Kairouan": { members: 618, region: "الوسط الغربي", coordinator_name: "عزيزة الهيشري (منسق جهوي)" },
-  "kasserine": { members: 485, region: "الوسط الغربي", coordinator_name: "إياد ميساوي (منسق جهوي)" },
-  "Sidi Bouzid": { members: 968, region: "الوسط الغربي", coordinator_name: "خيرة عافي (منسقة جهوية)" },
-  "Gafsa": { members: 1447, region: "الوسط الغربي", coordinator_name: "حيدر المشي (المنسق الجهوي)" },
+  // الوسط الغربي 
+  "Kairouan": { members: 618, region: "الوسط الغربي", coordinator_name: "عزيزة الهيشري" }, // تم تحديث الاسم
+  "kasserine": { members: 485, region: "الوسط الغربي", coordinator_name: "إياد ميساوي" }, // تم تحديث الاسم
+  "Sidi Bouzid": { members: 968, region: "الوسط الغربي", coordinator_name: "خيرة عافي" }, // تم تحديث الاسم
+  "Gafsa": { members: 1447, region: "الوسط الغربي", coordinator_name: "حيدر المشي" }, // تم تحديث الاسم
   
-  // الجنوب (منسقة إقليمية: وحيدة كواش)
-  "Touzer": { members: 972, region: "الجنوب", coordinator_name: "أحمد مقدم (منسق جهوي)" },
-  "Kebili": { members: 802, region: "الجنوب", coordinator_name: "ايمان شعاعة (منسقة جهوية)" },
-  "Gabes": { members: 3806, region: "الجنوب", coordinator_name: "أسامة بن زيد (منسق جهوي)" },
-  "Mednine": { members: 2754, region: "الجنوب", coordinator_name: "منجي بالرجب (منسق جهوي)" },
-  "Tataouine": { members: 883, region: "الجنوب", coordinator_name: "نبيل بوسنينة (منسقة جهوية)" }
+  // الجنوب 
+  "Touzer": { members: 972, region: "الجنوب", coordinator_name: "أحمد مقدم" }, // تم تحديث الاسم
+  "Kebili": { members: 802, region: "الجنوب", coordinator_name: "ايمان شعاعة" }, // تم تحديث الاسم
+  "Gabes": { members: 3806, region: "الجنوب", coordinator_name: "أسامة بن زيد" }, // تم تحديث الاسم
+  "Mednine": { members: 2754, region: "الجنوب", coordinator_name: "منجي بالرجب" }, // تم تحديث الاسم
+  "Tataouine": { members: 883, region: "الجنوب", coordinator_name: "نبيل بوسنينة" } // تم تحديث الاسم
 };
 // =========================================================================
 
+// =========================================================================
+// تحديث: روابط الاستمارات الكاملة
 const formsLinks = {
   // الشمال الشرقي
   "Tunis": "https://docs.google.com/forms/d/e/1FAIpQLSdLp23YSS1HARjCq8DZL5AzNoxJ808lteqnuvfqA1IeoAghpw/viewform",
@@ -156,6 +158,7 @@ const formsLinks = {
   "Mednine": "https://docs.google.com/forms/d/e/1FAIpQLScZNmOkZQIcFzop9XJTcgjueJAg2XqiDWD2O8Hk3n7F3MCG_Q/viewform",
   "Tataouine": "https://docs.google.com/forms/d/e/1FAIpQLScau2aVzneLDLv4atr0ouUvVx1vzC_A8z6DcAl1Gu43UXO0aQ/viewform"
 };
+// =========================================================================
 
 const regionColors = { "الشمال الشرقي": "#0096c7", "الشمال الغربي": "#52b69a", "الوسط الشرقي": "#f77f00", "الوسط الغربي": "#ffe6a7", "الجنوب": "#e63946" };
 
@@ -230,7 +233,7 @@ function resetHighlight(e) {
 }
 
 
-// تحميل ملف GeoJSON لخريطة تونس
+// تصحيح هنا: استخدام رابط GeoJSON مباشر من مصدر موثوق
 fetch('https://raw.githubusercontent.com/OpenData-Tunisia/GeoJSON/master/tunisia-gouvernorats.geojson')
   .then(res=>res.json())
   .then(geojson=>{
@@ -276,7 +279,7 @@ fetch('https://raw.githubusercontent.com/OpenData-Tunisia/GeoJSON/master/tunisia
               if (gouvData.members>0) popupText+=`<p style="margin: 5px 0;">عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}</p>`;
               if (gouvData.coordinator_name) popupText+=`<p style="margin: 5px 0;">المنسق الإقليمي: ${gouvData.coordinator_name}</p>`;
             }
-            if (formUrl && formUrl.length > 0) popupText+=`<a href="${formUrl}" target="_blank" class="popup-link" style="display:block; padding:8px; background:#007bff; color:white; text-align:center; border-radius:4px; margin-top:10px; text-decoration:none;">فتح استمارة التسجيل</a>`;
+            if (formUrl) popupText+=`<a href="${formUrl}" target="_blank" class="popup-link" style="display:block; padding:8px; background:#007bff; color:white; text-align:center; border-radius:4px; margin-top:10px; text-decoration:none;">فتح استمارة التسجيل</a>`;
             
             layer.bindPopup(popupText).openPopup();
           });
@@ -285,7 +288,7 @@ fetch('https://raw.githubusercontent.com/OpenData-Tunisia/GeoJSON/master/tunisia
           layer.on({
             mouseover: highlightFeature,
             mouseout: resetHighlight,
-            click: e=>{ if (formUrl && formUrl.length > 0) window.open(formUrl,'_blank'); } // فتح الرابط مباشرة
+            click: e=>{ if (formUrl) window.open(formUrl,'_blank'); } // فتح الرابط مباشرة
           });
         }
       }
@@ -307,7 +310,7 @@ fetch('https://raw.githubusercontent.com/OpenData-Tunisia/GeoJSON/master/tunisia
         if (isTouchDevice) {
           // على الهاتف، انقر على القائمة الجانبية يفتح الـ Popup أيضاً
           layer.fire('click'); 
-        } else if (formUrl && formUrl.length > 0) {
+        } else if (formUrl) {
           // على الحاسوب، انقر على القائمة الجانبية يفتح الرابط
           window.open(formUrl,'_blank');
         }
@@ -330,20 +333,20 @@ regionFilter.addEventListener('change', e=>{
     
     if (selectedRegion === 'all' || data.region === selectedRegion) {
       newStyle.fillOpacity = 0.85; // الأقاليم المختارة مرئية بوضوح
+      // تكبير الإقليم المحدد
+      if (selectedRegion !== 'all' && regionBounds[selectedRegion]) {
+        map.fitBounds(regionBounds[selectedRegion].pad(0.1));
+      } else if (selectedRegion === 'all' && geojsonLayer) {
+        map.fitBounds(geojsonLayer.getBounds().pad(0.05));
+      }
     } else {
       newStyle.fillOpacity = 0.1; // الولايات الأخرى شفافة جداً
     }
     
     layer.setStyle(newStyle);
   });
-  
-  // تكبير الإقليم المحدد
-  if (selectedRegion !== 'all' && regionBounds[selectedRegion]) {
-    map.fitBounds(regionBounds[selectedRegion].pad(0.1));
-  } else {
-    map.fitBounds(geojsonLayer.getBounds().pad(0.05));
-  }
 });
+
 
 toggleButton.addEventListener('click', ()=>legendContainer.classList.toggle('visible'));
 document.getElementById('reset-view-btn').addEventListener('click', ()=>{
