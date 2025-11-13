@@ -231,7 +231,7 @@ function resetHighlight(e) {
 
 
 // تحميل ملف GeoJSON لخريطة تونس
-fetch('TN-gouvernorats.geojson')
+fetch('https://raw.githubusercontent.com/OpenData-Tunisia/GeoJSON/master/tunisia-gouvernorats.geojson')
   .then(res=>res.json())
   .then(geojson=>{
     const regions = new Set();
