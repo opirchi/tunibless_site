@@ -1,64 +1,64 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>خريطة أقاليم تونس</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style>
-    body, html { height: 100%; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; display: flex; flex-direction: column; overflow: hidden; background-color: #f0f0f0; }
-    #header { padding: 10px 15px; background: #fff; border-bottom: 1px solid #dadd; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; flex-shrink: 0; }
-    #toggle-legend-btn { display: none; padding: 5px 10px; font-size: 1.2rem; background: #f8f8f8; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; }
-    #header label { font-weight: bold; flex-shrink: 0; }
-    #region-filter { padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; flex-grow: 1; min-width: 200px; }
-    .main-container { position: relative; flex-grow: 1; display: flex; overflow: hidden; }
-    #legend-container { width: 340px; background: #fff; box-shadow: -2px 0 8px rgba(0,0,0,0.1); z-index: 1001; overflow-y: auto; flex-shrink: 0; transition: margin-right 0.3s ease; padding-bottom:20px;}
-    #map-wrapper { flex-grow: 1; position: relative; }
-    #map { height: 100%; width: 100%; }
-    #loader { position: absolute; top: 50%; left: 50%; width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; z-index: 1002; transform: translate(-50%, -50%); }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .legend-panel h4 { margin: 0; padding: 15px; text-align: center; background: #f9f9f9; border-bottom: 1px solid #eee; font-size: 18px; }
-    .legend-region { padding: 0 15px 15px; }
-    .legend-region h5 { margin: 15px 0 10px; padding-bottom: 5px; border-bottom: 1px solid #eee; display: flex; align-items: center; font-size: 16px; }
-    .legend-region h5 .region-icon { width: 20px; height: 20px; display: inline-block; margin-left: 8px; border-radius: 50%; border: 2px solid #555; }
-    .legend-panel ul { list-style: none; padding: 0; margin: 0; }
-    .legend-panel li { display: flex; justify-content: space-between; align-items: center; padding: 8px 5px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background-color 0.2s; }
-    .legend-panel li:hover { background-color: #f5f5f5; }
-    .legend-panel li:last-child { border-bottom: none; }
-    .legend-panel .gov-name { font-weight: 500; }
-    .legend-panel .coordinator-name { color: #555; font-size: 13px; }
-    .legend-panel .member-count { font-weight: bold; color: #007bff; margin-right: 8px; font-size: 13px; }
-    .reset-view-button { position: absolute; top: 10px; left: 10px; z-index: 1000; background: white; color: #333; width: 30px; height: 30px; line-height: 30px; text-align: center; border-radius: 4px; box-shadow: 0 1px 5px rgba(0,0,0,0.65); cursor: pointer; font-size: 1.2rem; text-decoration: none; }
-    .reset-view-button:hover { background: #f4f4f4; }
-    .leaflet-tooltip { background: rgba(0,123,255,0.9) !important; color:#fff !important; font-size:14px; font-weight:bold; padding:6px 10px; border-radius:6px; }
-    @media (max-width: 768px) {
-      #toggle-legend-btn { display: block; }
-      #legend-container { position: absolute; height: 100%; margin-right: -340px; }
-      #legend-container.visible { margin-right: 0; }
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>خريطة أقاليم تونس</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body, html { height: 100%; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; display: flex; flex-direction: column; overflow: hidden; background-color: #f0f0f0; }
+    #header { padding: 10px 15px; background: #fff; border-bottom: 1px solid #dadd; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; flex-shrink: 0; }
+    #toggle-legend-btn { display: none; padding: 5px 10px; font-size: 1.2rem; background: #f8f8f8; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; }
+    #header label { font-weight: bold; flex-shrink: 0; }
+    #region-filter { padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; flex-grow: 1; min-width: 200px; }
+    .main-container { position: relative; flex-grow: 1; display: flex; overflow: hidden; }
+    #legend-container { width: 340px; background: #fff; box-shadow: -2px 0 8px rgba(0,0,0,0.1); z-index: 1001; overflow-y: auto; flex-shrink: 0; transition: margin-right 0.3s ease; padding-bottom:20px;}
+    #map-wrapper { flex-grow: 1; position: relative; }
+    #map { height: 100%; width: 100%; }
+    #loader { position: absolute; top: 50%; left: 50%; width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; z-index: 1002; transform: translate(-50%, -50%); }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .legend-panel h4 { margin: 0; padding: 15px; text-align: center; background: #f9f9f9; border-bottom: 1px solid #eee; font-size: 18px; }
+    .legend-region { padding: 0 15px 15px; }
+    .legend-region h5 { margin: 15px 0 10px; padding-bottom: 5px; border-bottom: 1px solid #eee; display: flex; align-items: center; font-size: 16px; }
+    .legend-region h5 .region-icon { width: 20px; height: 20px; display: inline-block; margin-left: 8px; border-radius: 50%; border: 2px solid #555; }
+    .legend-panel ul { list-style: none; padding: 0; margin: 0; }
+    .legend-panel li { display: flex; justify-content: space-between; align-items: center; padding: 8px 5px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background-color 0.2s; }
+    .legend-panel li:hover { background-color: #f5f5f5; }
+    .legend-panel li:last-child { border-bottom: none; }
+    .legend-panel .gov-name { font-weight: 500; }
+    .legend-panel .coordinator-name { color: #555; font-size: 13px; }
+    .legend-panel .member-count { font-weight: bold; color: #007bff; margin-right: 8px; font-size: 13px; }
+    .reset-view-button { position: absolute; top: 10px; left: 10px; z-index: 1000; background: white; color: #333; width: 30px; height: 30px; line-height: 30px; text-align: center; border-radius: 4px; box-shadow: 0 1px 5px rgba(0,0,0,0.65); cursor: pointer; font-size: 1.2rem; text-decoration: none; }
+    .reset-view-button:hover { background: #f4f4f4; }
+    .leaflet-tooltip { background: rgba(0,123,255,0.9) !important; color:#fff !important; font-size:14px; font-weight:bold; padding:6px 10px; border-radius:6px; }
+    @media (max-width: 768px) {
+      #toggle-legend-btn { display: block; }
+      #legend-container { position: absolute; height: 100%; margin-right: -340px; }
+      #legend-container.visible { margin-right: 0; }
+    }
+  </style>
 </head>
 <body>
 
 <div id="header">
-  <button id="toggle-legend-btn" title="إظهار/إخفاء الدليل">☰</button>
-  <div style="flex-basis:100%; display:flex; align-items:center; gap:10px;">
-    <img src="https://i.imgur.com/rvVqkm6.png" alt="المنسقة الوطنية" style="width:50px; height:50px; border-radius:50%; border:2px solid #007bff;">
-    <span style="font-weight:bold; font-size:16px;">المنسقة الوطنية: سعاد البش </span>
-  </div>
-  <label for="region-filter">فلترة حسب الإقليم:</label>
-  <select id="region-filter">
-    <option value="all">كل الأقاليم</option>
-  </select>
+  <button id="toggle-legend-btn" title="إظهار/إخفاء الدليل">☰</button>
+  <div style="flex-basis:100%; display:flex; align-items:center; gap:10px;">
+    <img src="https://i.imgur.com/rvVqkm6.png" alt="المنسقة الوطنية" style="width:50px; height:50px; border-radius:50%; border:2px solid #007bff;">
+    <span style="font-weight:bold; font-size:16px;">المنسقة الوطنية: سعاد البش </span>
+  </div>
+  <label for="region-filter">فلترة حسب الإقليم:</label>
+  <select id="region-filter">
+    <option value="all">كل الأقاليم</option>
+  </select>
 </div>
 
 <div class="main-container">
-  <div id="legend-container"></div>
-  <div id="map-wrapper">
-    <div id="map"></div>
-    <div id="loader"></div>
-    <a id="reset-view-btn" class="reset-view-button" title="إعادة تعيين العرض">&#x21BA;</a>
-  </div>
+  <div id="legend-container"></div>
+  <div id="map-wrapper">
+    <div id="map"></div>
+    <div id="loader"></div>
+    <a id="reset-view-btn" class="reset-view-button" title="إعادة تعيين العرض">&#x21BA;</a>
+  </div>
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -76,6 +76,10 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {}
 // =========================================================================
 const regionData = {
   "الشمال الشرقي": { coordinator_name: "صوفية الجلالي" },
+  "الشمال الغربي": { coordinator_name: "الاسم واللقب" },
+  "الوسط الشرقي": { coordinator_name: "الاسم واللقب" },
+  "الوسط الغربي": { coordinator_name: "الاسم واللقب" },
+  "الجنوب":       { coordinator_name: "الاسم واللقب" }
   "الشمال الغربي": { coordinator_name: "ليلى مرواني" },
   "الوسط الشرقي": { coordinator_name: "ريم فرحات" },
   "الوسط الغربي": { coordinator_name: "وصال تليلي" },
@@ -86,45 +90,72 @@ const regionData = {
 // 🏛️ بيانات الولايات (24 ولاية) - تشمل الأعضاء، الإقليم، ومنسق الولاية (الاسم المحدث)
 // =========================================================================
 const governorateData = {
-  // الشمال الشرقي 
-  "Tunis": { members: 1748, region: "الشمال الشرقي", coordinator_name: "يسرى محمد" }, 
-  "Ariana": { members: 1074, region: "الشمال الشرقي", coordinator_name: "محمد الهادي الخالدي" }, 
-  "Ben Arous": { members: 1559, region: "الشمال الشرقي", coordinator_name: "هاجر سعيد" }, 
-  "Manouba": { members: 887, region: "الشمال الشرقي", coordinator_name: "اسامة عياري" }, 
-  "Nabel": { members: 1494, region: "الشمال الشرقي", coordinator_name: "روضة عياد" }, 
-  "Zagouen": { members: 300, region: "الشمال الشرقي", coordinator_name: "منسق زغوان (قيد التعيين)" }, 
-  "Bizerte": { members: 1004, region: "الشمال الشرقي", coordinator_name: "نزار الهذلي" }, 
+  "Tunis": { members: 1748, region: "الشمال الشرقي", coordinator_name: "منسق تونس" },
+  "Ariana": { members: 1074, region: "الشمال الشرقي", coordinator_name: "منسق أريانة" },
+  "Ben Arous": { members: 1559, region: "الشمال الشرقي", coordinator_name: "هاجر السيد" },
+  "Manouba": { members: 887, region: "الشمال الشرقي", coordinator_name: "حامد الدريدي" },
+  "Nabel": { members: 1494, region: "الشمال الشرقي", coordinator_name: "منسق نابل" },
+  "Zagouen": { members: 300, region: "الشمال الشرقي", coordinator_name: "منسق زغوان" },
+  "Bizerte": { members: 1004, region: "الشمال الشرقي", coordinator_name: "منسق بنزرت" },
+  "Beja": { members: 369, region: "الشمال الغربي", coordinator_name: "منسق باجة" },
+  "Jandouba": { members: 646, region: "الشمال الغربي", coordinator_name: "منسق جندوبة" },
+  "Le kef": { members: 831, region: "الشمال الغربي", coordinator_name: "منسق الكاف" },
+  "Siliana": { members: 234, region: "الشمال الغربي", coordinator_name: "منسق سليانة" },
+  "Sousse": { members: 1376, region: "الوسط الشرقي", coordinator_name: "منسق سوسة" },
+  "Monastir": { members: 1091, region: "الوسط الشرقي", coordinator_name: "منسق المنستير" },
+  "Mahdia": { members: 746, region: "الوسط الشرقي", coordinator_name: "منسق المهدية" },
+  "Sfax": { members: 1461, region: "الوسط الشرقي", coordinator_name: "منسق صفاقس" },
+  "Kairouan": { members: 618, region: "الوسط الغربي", coordinator_name: "منسق القيروان" },
+  "kasserine": { members: 485, region: "الوسط الغربي", coordinator_name: "منسق القصرين" },
+  "Sidi Bouzid": { members: 968, region: "الوسط الغربي", coordinator_name: "منسق سيدي بوزيد" },
+  "Gafsa": { members: 1447, region: "الوسط الغربي", coordinator_name: "منسق قفصة" },
+  "Touzer": { members: 972, region: "الجنوب", coordinator_name: "منسق توزر" },
+  "Kebili": { members: 802, region: "الجنوب", coordinator_name: "منسق قبلي" },
+  "Gabes": { members: 3806, region: "الجنوب", coordinator_name: "منسق قابس" },
+  "Mednine": { members: 2754, region: "الجنوب", coordinator_name: "منسق مدنين" },
+  "Tataouine": { members: 883, region: "الجنوب", coordinator_name: "منسق تطاوين" }
+  // الشمال الشرقي 
+  "Tunis": { members: 1748, region: "الشمال الشرقي", coordinator_name: "يسرى محمد" }, 
+  "Ariana": { members: 1074, region: "الشمال الشرقي", coordinator_name: "محمد الهادي الخالدي" }, 
+  "Ben Arous": { members: 1559, region: "الشمال الشرقي", coordinator_name: "هاجر سعيد" }, 
+  "Manouba": { members: 887, region: "الشمال الشرقي", coordinator_name: "اسامة عياري" }, 
+  "Nabel": { members: 1494, region: "الشمال الشرقي", coordinator_name: "روضة عياد" }, 
+  "Zagouen": { members: 300, region: "الشمال الشرقي", coordinator_name: "منسق زغوان (قيد التعيين)" }, 
+  "Bizerte": { members: 1004, region: "الشمال الشرقي", coordinator_name: "نزار الهذلي" }, 
 
-  // الشمال الغربي 
-  "Beja": { members: 369, region: "الشمال الغربي", coordinator_name: "ياسمين المؤدب" }, 
-  "Jandouba": { members: 646, region: "الشمال الغربي", coordinator_name: "عمر همامي" }, 
-  "Le kef": { members: 831, region: "الشمال الغربي", coordinator_name: "مروى نواصرية" }, 
-  "Siliana": { members: 234, region: "الشمال الغربي", coordinator_name: "سليم الرياحي" }, 
+  // الشمال الغربي 
+  "Beja": { members: 369, region: "الشمال الغربي", coordinator_name: "ياسمين المؤدب" }, 
+  "Jandouba": { members: 646, region: "الشمال الغربي", coordinator_name: "عمر همامي" }, 
+  "Le kef": { members: 831, region: "الشمال الغربي", coordinator_name: "مروى نواصرية" }, 
+  "Siliana": { members: 234, region: "الشمال الغربي", coordinator_name: "سليم الرياحي" }, 
   
-  // الوسط الشرقي 
-  "Sousse": { members: 1376, region: "الوسط الشرقي", coordinator_name: "محمد مقداد" }, 
-  "Monastir": { members: 1091, region: "الوسط الشرقي", coordinator_name: "درصاف نايلي" }, 
-  "Mahdia": { members: 746, region: "الوسط الشرقي", coordinator_name: "زياد بودية" }, 
-  "Sfax": { members: 1461, region: "الوسط الشرقي", coordinator_name: "عماد عمار" }, 
+  // الوسط الشرقي 
+  "Sousse": { members: 1376, region: "الوسط الشرقي", coordinator_name: "محمد مقداد" }, 
+  "Monastir": { members: 1091, region: "الوسط الشرقي", coordinator_name: "درصاف نايلي" }, 
+  "Mahdia": { members: 746, region: "الوسط الشرقي", coordinator_name: "زياد بودية" }, 
+  "Sfax": { members: 1461, region: "الوسط الشرقي", coordinator_name: "عماد عمار" }, 
 
-  // الوسط الغربي 
-  "Kairouan": { members: 618, region: "الوسط الغربي", coordinator_name: "عزيزة الهيشري" }, 
-  "kasserine": { members: 485, region: "الوسط الغربي", coordinator_name: "إياد ميساوي" }, 
-  "Sidi Bouzid": { members: 968, region: "الوسط الغربي", coordinator_name: "خيرة عافي" }, 
-  "Gafsa": { members: 1447, region: "الوسط الغربي", coordinator_name: "حيدر المشي" }, 
+  // الوسط الغربي 
+  "Kairouan": { members: 618, region: "الوسط الغربي", coordinator_name: "عزيزة الهيشري" }, 
+  "kasserine": { members: 485, region: "الوسط الغربي", coordinator_name: "إياد ميساوي" }, 
+  "Sidi Bouzid": { members: 968, region: "الوسط الغربي", coordinator_name: "خيرة عافي" }, 
+  "Gafsa": { members: 1447, region: "الوسط الغربي", coordinator_name: "حيدر المشي" }, 
   
-  // الجنوب 
-  "Touzer": { members: 972, region: "الجنوب", coordinator_name: "أحمد مقدم" }, 
-  "Kebili": { members: 802, region: "الجنوب", coordinator_name: "ايمان شعاعة" }, 
-  "Gabes": { members: 3806, region: "الجنوب", coordinator_name: "أسامة بن زيد" }, 
-  "Mednine": { members: 2754, region: "الجنوب", coordinator_name: "منجي بالرجب" }, 
-  "Tataouine": { members: 883, region: "الجنوب", coordinator_name: "نبيل بوسنينة" } 
+  // الجنوب 
+  "Touzer": { members: 972, region: "الجنوب", coordinator_name: "أحمد مقدم" }, 
+  "Kebili": { members: 802, region: "الجنوب", coordinator_name: "ايمان شعاعة" }, 
+  "Gabes": { members: 3806, region: "الجنوب", coordinator_name: "أسامة بن زيد" }, 
+  "Mednine": { members: 2754, region: "الجنوب", coordinator_name: "منجي بالرجب" }, 
+  "Tataouine": { members: 883, region: "الجنوب", coordinator_name: "نبيل بوسنينة" } 
 };
 
 // =========================================================================
 // 🔗 روابط استمارات التسجيل لكل ولاية
 // =========================================================================
 const formsLinks = {
+  "Ariana": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-ariana",
+  "Beja": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-beja",
+  "Ben Arous": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-ben-arous",
   // الشمال الشرقي
   "Tunis": "https://docs.google.com/forms/d/e/1FAIpQLSdLp23YSS1HARjCq8DZL5AzNoxJ808lteqnuvfqA1IeoAghpw/viewform",
   "Ariana": "https://docs.google.com/forms/d/e/1FAIpQLSeIGzfgByZSGhInjFxcxslf5vyqScEaKQHm4VsXFtYv-miJCQ/viewform",
@@ -133,6 +164,8 @@ const formsLinks = {
   "Nabel": "https://docs.google.com/forms/d/e/1FAIpQLSekivAqyuE8Wb9Bf6IvDYfi7O-y159dpyXduTlmsDNI10AVtw/viewform",
   "Zagouen": "https://docs.google.com/forms/d/e/1FAIpQLSdHSr9wNzqhvfuTI3FD3OXT6XGRJ0h13DBHCxtxJ31vTY-pfA/viewform",
   "Bizerte": "https://sites.google.com/view/bizerte1/accueil",
+  "Gabes": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-gabes"
+  // يمكنك إضافة بقية الروابط حسب الحاجة
 
   // الشمال الغربي
   "Beja": "https://docs.google.com/forms/d/e/1FAIpQLScDsTtGJyP-ZstwxkztGMKgZGmDPMKeyWGR1KMxrSdr0e7QcA/viewform",
@@ -197,7 +230,7 @@ function highlightFeature(e) {
   const gouvNameFr = layer.feature.properties.gouv_fr;
   const data = governorateData[gouvNameFr];
 
-  // إصلاح المشكلة 1: لا تسمح بتغيير اللون إذا كان الإقليم غير 'all' والولاية لا تنتمي إليه
+  // لا تسمح بتغيير اللون إذا كان الإقليم غير 'all' والولاية لا تنتمي إليه
   if (selectedRegion !== 'all' && (!data || data.region !== selectedRegion)) {
     return;
   }
@@ -205,7 +238,7 @@ function highlightFeature(e) {
   layer.setStyle({
     weight: 3,
     color: '#333',
-    fillOpacity: 1 
+    fillOpacity: 1 // اجعلها 1 لتظهر بوضوح عند التفاعل
   });
 
   if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -222,12 +255,13 @@ function resetHighlight(e) {
 
   let baseStyle = style(layer.feature);
   
-  // إصلاح المشكلة 1: تطبيق الشفافية على الولايات التي لا تنتمي للإقليم المختار
+  // 🛑 التعديل هنا لضمان تطبيق الشفافية (0.1) على الولايات غير المختارة
   if (selectedRegion !== 'all' && (!data || data.region !== selectedRegion)) {
     baseStyle.fillOpacity = 0.1;
   } else {
     baseStyle.fillOpacity = 0.85; // الإقليم المختار يعود لشفافيته الأساسية
   }
+  // وإلا ستبقى 0.85 كما في الدالة style()
 
   layer.setStyle(baseStyle);
 }
@@ -266,27 +300,47 @@ fetch('TN-gouvernorats.geojson')
         }, { direction: 'top', sticky: true });
 
         if (isTouchDevice) {
-          // 2. منطق الجهاز اللوحي/الهاتف: نقرة واحدة تظهر الـ Popup، الـ Popup فيه رابط
-          layer.on('click', e => {
-            // تطبيق الـ highlight عند النقر
-            if (lastSelectedLayer) geojsonLayer.resetStyle(lastSelectedLayer);
-            highlightFeature(e);
-            lastSelectedLayer = e.target;
+  layer.on('click', e => {
 
-                // إغلاق أي Popup مفتوح قبل فتح الجديد (لضمان ظهور بطاقة واحدة فقط - إصلاح المشكلة 2)
-                map.closePopup();
+    // إغلاق أي Popup مفتوح قبل فتح آخر
+    map.closePopup();
 
-            // بناء محتوى الـ Popup
-            let popupText = `<h3 style="margin:0;">${gouvFrToAr[gouvNameFr]}</h3>`;
-            if (gouvData) {
-              if (gouvData.members>0) popupText+=`<p style="margin: 5px 0;">عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}</p>`;
-              if (gouvData.coordinator_name) popupText+=`<p style="margin: 5px 0;">المنسق الإقليمي: ${gouvData.coordinator_name}</p>`;
-            }
-            if (formUrl) popupText+=`<a href="${formUrl}" target="_blank" class="popup-link" style="display:block; padding:8px; background:#007bff; color:white; text-align:center; border-radius:4px; margin-top:10px; text-decoration:none;">فتح استمارة التسجيل</a>`;
-            
-            layer.bindPopup(popupText).openPopup();
-          });
-        } else {
+    // تطبيق الـ highlight
+    if (lastSelectedLayer) geojsonLayer.resetStyle(lastSelectedLayer);
+    highlightFeature(e);
+    lastSelectedLayer = e.target;
+
+    // بناء نص البطاقة
+    let popupText = `<h3 style="margin:0;">${gouvFrToAr[gouvNameFr]}</h3>`;
+    if (gouvData) {
+      if (gouvData.members > 0) {
+        popupText += `<p style="margin: 5px 0;">عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}</p>`;
+      }
+      if (gouvData.coordinator_name) {
+        popupText += `<p style="margin: 5px 0;">المنسق الإقليمي: ${gouvData.coordinator_name}</p>`;
+      }
+    }
+    if (formUrl) {
+      popupText += `
+        <a href="${formUrl}" target="_blank" class="popup-link"
+         style="display:block; padding:8px; background:#007bff; color:white; 
+         text-align:center; border-radius:4px; margin-top:10px; text-decoration:none;">
+         فتح استمارة التسجيل
+        </a>`;
+    }
+
+    // لا نعيد bindPopup إذا كانت موجودة
+    if (!layer._popup) {
+      layer.bindPopup(popupText, { autoPan: true });
+    } else {
+      layer._popup.setContent(popupText);
+    }
+
+    // فتح البطاقة مرة واحدة فقط
+    layer.openPopup();
+  });
+}
+ else {
           // 3. منطق الحاسوب: التمرير يظهر Tooltip، والنقر ينتقل مباشرة
           layer.on({
             mouseover: highlightFeature,
@@ -307,18 +361,14 @@ fetch('TN-gouvernorats.geojson')
       const layer = layersByGouvFr[gouvFr];
       const formUrl = formsLinks[gouvFr];
       if (!layer) return;
-      
-      // التفاعل عند التمرير (Mouseover/Mouseout) يعمل على الحاسوب والهاتف
       item.addEventListener('mouseover', ()=>layer.fire('mouseover'));
       item.addEventListener('mouseout', ()=>layer.fire('mouseout'));
-
       item.addEventListener('click', ()=>{
         if (isTouchDevice) {
-          // على الهاتف (إصلاح المشكلة 2): النقر على القائمة الجانبية لا يجب أن يظهر popup آخر
-          // بدلاً من ذلك، نكتفي بالتمرير (Highlight) ونفتح الرابط مباشرة إذا كان متاحاً
-          if (formUrl) window.open(formUrl,'_blank');
+          // على الهاتف، انقر على القائمة الجانبية يفتح الـ Popup أيضاً
+          layer.fire('click'); 
         } else if (formUrl) {
-          // على الحاسوب: انقر على القائمة الجانبية يفتح الرابط
+          // على الحاسوب، انقر على القائمة الجانبية يفتح الرابط
           window.open(formUrl,'_blank');
         }
       });
@@ -333,17 +383,17 @@ regionFilter.addEventListener('change', e=>{
   geojsonLayer.eachLayer(layer=>{
     const gouvNameFr = layer.feature.properties.gouv_fr;
     const data = governorateData[gouvNameFr];
-      
+
     if (!data) return;
 
     let newStyle = style(layer.feature);
-    
+
     if (selectedRegion === 'all' || data.region === selectedRegion) {
       newStyle.fillOpacity = 0.85; // الأقاليم المختارة مرئية بوضوح
     } else {
-      newStyle.fillOpacity = 0.1; // الولايات الأخرى شفافة جداً (إصلاح المشكلة 1)
+      newStyle.fillOpacity = 0.1; // الولايات الأخرى شفافة جداً
     }
-    
+
     layer.setStyle(newStyle);
   });
 });
