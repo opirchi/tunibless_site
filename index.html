@@ -234,7 +234,7 @@ function resetHighlight(e) {
 
 
 // تحميل ملف GeoJSON لخريطة تونس
-fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries/TUN.geo.json')
+fetch('TN-gouvernorats.geojson')
   .then(res=>res.json())
   .then(geojson=>{
     const regions = new Set();
