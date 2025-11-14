@@ -76,6 +76,10 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {}
 // =========================================================================
 const regionData = {
   "الشمال الشرقي": { coordinator_name: "صوفية الجلالي" },
+  "الشمال الغربي": { coordinator_name: "الاسم واللقب" },
+  "الوسط الشرقي": { coordinator_name: "الاسم واللقب" },
+  "الوسط الغربي": { coordinator_name: "الاسم واللقب" },
+  "الجنوب":       { coordinator_name: "الاسم واللقب" },
   "الشمال الغربي": { coordinator_name: "ليلى مرواني" },
   "الوسط الشرقي": { coordinator_name: "ريم فرحات" },
   "الوسط الغربي": { coordinator_name: "وصال تليلي" },
@@ -86,6 +90,44 @@ const regionData = {
 // 🏛️ بيانات الولايات (24 ولاية) - تشمل الأعضاء، الإقليم، ومنسق الولاية (الاسم المحدث)
 // =========================================================================
 const governorateData = {
+  "Tunis": { members: 1748, region: "الشمال الشرقي", coordinator_name: "منسق تونس" },
+  "Ariana": { members: 1074, region: "الشمال الشرقي", coordinator_name: "منسق أريانة" },
+  "Ben Arous": { members: 1559, region: "الشمال الشرقي", coordinator_name: "هاجر السيد" },
+  "Manouba": { members: 887, region: "الشمال الشرقي", coordinator_name: "حامد الدريدي" },
+  "Nabel": { members: 1494, region: "الشمال الشرقي", coordinator_name: "منسق نابل" },
+  "Zagouen": { members: 300, region: "الشمال الشرقي", coordinator_name: "منسق زغوان" },
+  "Bizerte": { members: 1004, region: "الشمال الشرقي", coordinator_name: "منسق بنزرت" },
+  "Beja": { members: 369, region: "الشمال الغربي", coordinator_name: "منسق باجة" },
+  "Jandouba": { members: 646, region: "الشمال الغربي", coordinator_name: "منسق جندوبة" },
+  "Le kef": { members: 831, region: "الشمال الغربي", coordinator_name: "منسق الكاف" },
+  "Siliana": { members: 234, region: "الشمال الغربي", coordinator_name: "منسق سليانة" },
+  "Sousse": { members: 1376, region: "الوسط الشرقي", coordinator_name: "منسق سوسة" },
+  "Monastir": { members: 1091, region: "الوسط الشرقي", coordinator_name: "منسق المنستير" },
+  "Mahdia": { members: 746, region: "الوسط الشرقي", coordinator_name: "منسق المهدية" },
+  "Sfax": { members: 1461, region: "الوسط الشرقي", coordinator_name: "منسق صفاقس" },
+  "Kairouan": { members: 618, region: "الوسط الغربي", coordinator_name: "منسق القيروان" },
+  "kasserine": { members: 485, region: "الوسط الغربي", coordinator_name: "منسق القصرين" },
+  "Sidi Bouzid": { members: 968, region: "الوسط الغربي", coordinator_name: "منسق سيدي بوزيد" },
+  "Gafsa": { members: 1447, region: "الوسط الغربي", coordinator_name: "منسق قفصة" },
+  "Touzer": { members: 972, region: "الجنوب", coordinator_name: "منسق توزر" },
+  "Kebili": { members: 802, region: "الجنوب", coordinator_name: "منسق قبلي" },
+  "Gabes": { members: 3806, region: "الجنوب", coordinator_name: "منسق قابس" },
+  "Mednine": { members: 2754, region: "الجنوب", coordinator_name: "منسق مدنين" },
+  "Tataouine": { members: 883, region: "الجنوب", coordinator_name: "منسق تطاوين" }
+  // الشمال الشرقي 
+  "Tunis": { members: 1748, region: "الشمال الشرقي", coordinator_name: "يسرى محمد" }, 
+  "Ariana": { members: 1074, region: "الشمال الشرقي", coordinator_name: "محمد الهادي الخالدي" }, 
+  "Ben Arous": { members: 1559, region: "الشمال الشرقي", coordinator_name: "هاجر سعيد" }, 
+  "Manouba": { members: 887, region: "الشمال الشرقي", coordinator_name: "اسامة عياري" }, 
+  "Nabel": { members: 1494, region: "الشمال الشرقي", coordinator_name: "روضة عياد" }, 
+  "Zagouen": { members: 300, region: "الشمال الشرقي", coordinator_name: "منسق زغوان (قيد التعيين)" }, 
+  "Bizerte": { members: 1004, region: "الشمال الشرقي", coordinator_name: "نزار الهذلي" }, 
+
+  // الشمال الغربي 
+  "Beja": { members: 369, region: "الشمال الغربي", coordinator_name: "ياسمين المؤدب" }, 
+  "Jandouba": { members: 646, region: "الشمال الغربي", coordinator_name: "عمر همامي" }, 
+  "Le kef": { members: 831, region: "الشمال الغربي", coordinator_name: "مروى نواصرية" }, 
+  "Siliana": { members: 234, region: "الشمال الغربي", coordinator_name: "سليم الرياحي" }, 
   // الشمال الشرقي 
   "Tunis": { members: 1748, region: "الشمال الشرقي", coordinator_name: "يسرى محمد" }, 
   "Ariana": { members: 1074, region: "الشمال الشرقي", coordinator_name: "محمد الهادي الخالدي" }, 
@@ -100,7 +142,18 @@ const governorateData = {
   "Jandouba": { members: 646, region: "الشمال الغربي", coordinator_name: "عمر همامي" }, 
   "Le kef": { members: 831, region: "الشمال الغربي", coordinator_name: "مروى نواصرية" }, 
   "Siliana": { members: 234, region: "الشمال الغربي", coordinator_name: "سليم الرياحي" }, 
-  
+
+  // الوسط الشرقي 
+  "Sousse": { members: 1376, region: "الوسط الشرقي", coordinator_name: "محمد مقداد" }, 
+  "Monastir": { members: 1091, region: "الوسط الشرقي", coordinator_name: "درصاف نايلي" }, 
+  "Mahdia": { members: 746, region: "الوسط الشرقي", coordinator_name: "زياد بودية" }, 
+  "Sfax": { members: 1461, region: "الوسط الشرقي", coordinator_name: "عماد عمار" }, 
+
+  // الوسط الغربي 
+  "Kairouan": { members: 618, region: "الوسط الغربي", coordinator_name: "عزيزة الهيشري" }, 
+  "kasserine": { members: 485, region: "الوسط الغربي", coordinator_name: "إياد ميساوي" }, 
+  "Sidi Bouzid": { members: 968, region: "الوسط الغربي", coordinator_name: "خيرة عافي" }, 
+  "Gafsa": { members: 1447, region: "الوسط الغربي", coordinator_name: "حيدر المشي" }, 
   // الوسط الشرقي 
   "Sousse": { members: 1376, region: "الوسط الشرقي", coordinator_name: "محمد مقداد" }, 
   "Monastir": { members: 1091, region: "الوسط الشرقي", coordinator_name: "درصاف نايلي" }, 
@@ -112,7 +165,13 @@ const governorateData = {
   "kasserine": { members: 485, region: "الوسط الغربي", coordinator_name: "إياد ميساوي" }, 
   "Sidi Bouzid": { members: 968, region: "الوسط الغربي", coordinator_name: "خيرة عافي" }, 
   "Gafsa": { members: 1447, region: "الوسط الغربي", coordinator_name: "حيدر المشي" }, 
-  
+
+  // الجنوب 
+  "Touzer": { members: 972, region: "الجنوب", coordinator_name: "أحمد مقدم" }, 
+  "Kebili": { members: 802, region: "الجنوب", coordinator_name: "ايمان شعاعة" }, 
+  "Gabes": { members: 3806, region: "الجنوب", coordinator_name: "أسامة بن زيد" }, 
+  "Mednine": { members: 2754, region: "الجنوب", coordinator_name: "منجي بالرجب" }, 
+  "Tataouine": { members: 883, region: "الجنوب", coordinator_name: "نبيل بوسنينة" } 
   // الجنوب 
   "Touzer": { members: 972, region: "الجنوب", coordinator_name: "أحمد مقدم" }, 
   "Kebili": { members: 802, region: "الجنوب", coordinator_name: "ايمان شعاعة" }, 
@@ -125,6 +184,9 @@ const governorateData = {
 // 🔗 روابط استمارات التسجيل لكل ولاية
 // =========================================================================
 const formsLinks = {
+  "Ariana": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-ariana",
+  "Beja": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-beja",
+  "Ben Arous": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-ben-arous",
   // الشمال الشرقي
   "Tunis": "https://docs.google.com/forms/d/e/1FAIpQLSdLp23YSS1HARjCq8DZL5AzNoxJ808lteqnuvfqA1IeoAghpw/viewform",
   "Ariana": "https://docs.google.com/forms/d/e/1FAIpQLSeIGzfgByZSGhInjFxcxslf5vyqScEaKQHm4VsXFtYv-miJCQ/viewform",
@@ -133,6 +195,8 @@ const formsLinks = {
   "Nabel": "https://docs.google.com/forms/d/e/1FAIpQLSekivAqyuE8Wb9Bf6IvDYfi7O-y159dpyXduTlmsDNI10AVtw/viewform",
   "Zagouen": "https://docs.google.com/forms/d/e/1FAIpQLSdHSr9wNzqhvfuTI3FD3OXT6XGRJ0h13DBHCxtxJ31vTY-pfA/viewform",
   "Bizerte": "https://sites.google.com/view/bizerte1/accueil",
+  "Gabes": "https://hexaflexagon-mushroom-czyl.squarespace.com/anmeldung-gabes"
+  // يمكنك إضافة بقية الروابط حسب الحاجة
 
   // الشمال الغربي
   "Beja": "https://docs.google.com/forms/d/e/1FAIpQLScDsTtGJyP-ZstwxkztGMKgZGmDPMKeyWGR1KMxrSdr0e7QcA/viewform",
@@ -258,12 +322,25 @@ fetch('TN-gouvernorats.geojson')
         layersByGouvFr[gouvNameFr] = layer;
         const gouvData = governorateData[gouvNameFr];
         const formUrl = formsLinks[gouvNameFr];
+
+        // 1. ربط الـ Tooltip (تظهر عند التمرير على الحاسوب)
+        layer.bindTooltip(() => {
+          if(!gouvData) return "";
+          return `<strong>${gouvFrToAr[gouvNameFr]}</strong><br>المنسق: ${gouvData.coordinator_name}<br>عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}`;
+        }, { direction: 'top', sticky: true });
         
         // لن نقم بربط الـ Tooltip هنا، سيتم الفصل بين منطق الهاتف والحاسوب
 
         if (isTouchDevice) {
+          // 2. منطق الجهاز اللوحي/الهاتف: نقرة واحدة تظهر الـ Popup، الـ Popup فيه رابط
           // 2. منطق الجهاز اللوحي/الهاتف: نقرة واحدة تظهر الـ Popup (بطاقة واحدة)
           layer.on('click', e => {
+            // تطبيق الـ highlight عند النقر
+            if (lastSelectedLayer) geojsonLayer.resetStyle(lastSelectedLayer);
+            highlightFeature(e);
+            lastSelectedLayer = e.target;
+
+            // بناء محتوى الـ Popup
             const clickedLayer = e.target;
             
             // === إصلاح المشكلة 1: معالجة الـ Highlight ===
@@ -290,16 +367,25 @@ fetch('TN-gouvernorats.geojson')
             // بناء محتوى الـ Popup (البطاقة التي طلب الإبقاء عليها)
             let popupText = `<h3 style="margin:0;">${gouvFrToAr[gouvNameFr]}</h3>`;
             if (gouvData) {
+              if (gouvData.members>0) popupText+=`<p style="margin: 5px 0;">عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}</p>`;
+              if (gouvData.coordinator_name) popupText+=`<p style="margin: 5px 0;">المنسق الإقليمي: ${gouvData.coordinator_name}</p>`;
               if (gouvData.members > 0) popupText += `<p style="margin: 5px 0;">عدد الأعضاء: ${gouvData.members.toLocaleString('ar')}</p>`;
               // تصحيح بسيط: هذا منسق الولاية وليس الإقليم
               if (gouvData.coordinator_name) popupText += `<p style="margin: 5px 0;">المنسق: ${gouvData.coordinator_name}</p>`; 
             }
+            if (formUrl) popupText+=`<a href="${formUrl}" target="_blank" class="popup-link" style="display:block; padding:8px; background:#007bff; color:white; text-align:center; border-radius:4px; margin-top:10px; text-decoration:none;">فتح استمارة التسجيل</a>`;
             if (formUrl) popupText += `<a href="${formUrl}" target="_blank" class="popup-link" style="display:block; padding:8px; background:#007bff; color:white; text-align:center; border-radius:4px; margin-top:10px; text-decoration:none;">فتح استمارة التسجيل</a>`;
 
             layer.bindPopup(popupText).openPopup();
           });
 
         } else {
+          // 3. منطق الحاسوب: التمرير يظهر Tooltip، والنقر ينتقل مباشرة
+          layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: e=>{ if (formUrl) window.open(formUrl,'_blank'); } // فتح الرابط مباشرة
+          });
           // 3. منطق الحاسوب (Desktop)
             
             // === إصلاح المشكلة 2: نقل الـ Tooltip إلى هنا ===
@@ -335,6 +421,7 @@ fetch('TN-gouvernorats.geojson')
       item.addEventListener('click', ()=>{
         if (isTouchDevice) {
           // على الهاتف، انقر على القائمة الجانبية يفتح الـ Popup أيضاً
+          layer.fire('click'); 
           layer.fire('click'); 
         } else if (formUrl) {
           // على الحاسوب، انقر على القائمة الجانبية يفتح الرابط
